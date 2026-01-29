@@ -29,10 +29,16 @@
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <div class="dropdown">
-                            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img class="profile-pic" src="~/profile.jpg" alt="Profile" style="width:32px;height:32px;border-radius:999px;object-fit:cover;" />
+                            <a class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <img class="profile-pic" src="~/profile.jpg" alt="Profile"
+                                     style="width:32px;height:32px;border-radius:999px;object-fit:cover;" />
                                 <span class="d-none d-md-inline">@User.Identity?.Name</span>
-                            </button>
+                            </a>
+
                             <ul class="dropdown-menu dropdown-menu-end shadow">
                                 <li>
                                     <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">

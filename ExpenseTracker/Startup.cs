@@ -29,10 +29,11 @@ namespace ExpenseTracker
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             services
-                .AddIdentity<IdentityUser, IdentityRole>(options =>
+                .AddDefaultIdentity<IdentityUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
