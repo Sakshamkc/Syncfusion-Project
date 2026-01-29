@@ -1,15 +1,11 @@
 using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExpenseTracker
 {
@@ -22,16 +18,36 @@ namespace ExpenseTracker
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<ApplicationDbContext>(options =>options.UseMySql(Configuration.GetConnectionString("DevConnection"),
-            ServerVersion.AutoDetect(Configuration.GetConnectionString("DevConnection"))));
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0ViUH5edHVWTmFVWEc=");
+            services.AddRazorPages(); // required for Identity UI endpoints
+
+            var connectionString = Configuration.GetConnectionString("DevConnection");
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            services
+                .AddIdentity<IdentityUser, IdentityRole>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = Configuration["Identity:Cookie:Name"] ?? ".ExpenseTracker.Auth";
+                options.LoginPath = Configuration["Identity:Cookie:LoginPath"] ?? "/Identity/Account/Login";
+                options.LogoutPath = Configuration["Identity:Cookie:LogoutPath"] ?? "/Identity/Account/Logout";
+                options.AccessDeniedPath = Configuration["Identity:Cookie:AccessDeniedPath"] ?? "/Identity/Account/AccessDenied";
+            });
+
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
+                "Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0ViUH5edHVWTmFVWEc=");
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -41,14 +57,15 @@ namespace ExpenseTracker
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -56,6 +73,9 @@ namespace ExpenseTracker
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+
+                // Identity UI endpoints
+                endpoints.MapRazorPages();
             });
         }
     }
