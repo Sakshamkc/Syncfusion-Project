@@ -1,4 +1,4 @@
-using ExpenseTracker.Models;
+﻿using ExpenseTracker.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace ExpenseTracker
 {
@@ -23,34 +24,53 @@ namespace ExpenseTracker
             services.AddControllersWithViews();
             services.AddRazorPages(); // required for Identity UI endpoints
 
-            var connectionString = Configuration.GetConnectionString("DevConnection");
+            var cs = Configuration.GetConnectionString("DevConnection");
 
+            // Identity DB
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
 
-            services
-                .AddDefaultIdentity<IdentityUser>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+            // App tables DB (THIS WAS MISSING)
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>() // Identity uses Identity DB
                 .AddDefaultTokenProviders();
-
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.Name = Configuration["Identity:Cookie:Name"] ?? ".ExpenseTracker.Auth";
-                options.LoginPath = Configuration["Identity:Cookie:LoginPath"] ?? "/Identity/Account/Login";
-                options.LogoutPath = Configuration["Identity:Cookie:LogoutPath"] ?? "/Identity/Account/Logout";
-                options.AccessDeniedPath = Configuration["Identity:Cookie:AccessDeniedPath"] ?? "/Identity/Account/AccessDenied";
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/Login";
             });
-
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
                 "Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0ViUH5edHVWTmFVWEc=");
         }
+        // Startup.cs → add this method
+        private async Task CreateUser(IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            var email = "admin@expense.com";
+            var password = "Admin@123";
+
+            if (await userManager.FindByEmailAsync(email) == null)
+            {
+                var user = new IdentityUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                await userManager.CreateAsync(user, password);
+            }
+        }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            CreateUser(app).GetAwaiter().GetResult();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

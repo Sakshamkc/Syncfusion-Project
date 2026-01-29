@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExpenseTracker.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCommit : Migration
+    public partial class AppInit2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

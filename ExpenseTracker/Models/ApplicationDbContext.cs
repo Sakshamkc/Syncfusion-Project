@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Models
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
