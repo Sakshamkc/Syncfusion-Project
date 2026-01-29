@@ -26,7 +26,8 @@ namespace ExpenseTracker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DevConnnection")));
+            services.AddDbContext<ApplicationDbContext>(options =>options.UseMySql(Configuration.GetConnectionString("DevConnection"),
+            ServerVersion.AutoDetect(Configuration.GetConnectionString("DevConnection"))));
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0ViUH5edHVWTmFVWEc=");
         }
 
