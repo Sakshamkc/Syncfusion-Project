@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +38,10 @@ namespace ExpenseTracker.Models
         {
             get
             {
-                return ((Category == null) || Category.Type == "Expense" ? "- " : "+ ") + Amount.ToString("C0");
+                var culture = new CultureInfo("ne-NP");
+                var sign = (Category == null || Category.Type == "Expense") ? "- " : "+ ";
+
+                return sign + Amount.ToString("C0", culture);
             }
 
         }
