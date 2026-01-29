@@ -13,15 +13,54 @@
     <script src="https://cdn.syncfusion.com/ej2/20.3.47/dist/ej2.min.js"></script>
 </head>
 <body class="e-bigger">
+    @inject SignInManager<IdentityUser> SignInManager
+    @inject UserManager<IdentityUser> UserManager
+
     <partial name="_sidebar" />
     <div class="dock-target">
         <nav class="navbar sticky-top">
             <div class="container-fluid py-2 px-4">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <div>
+
+                <div class="d-flex align-items-center gap-3">
                     <i class="fa-solid fa-bell"></i>
                     <i class="fa-solid fa-message"></i>
-                    <img class="profile-pic" src="~/profile.jpg" />
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="profile-pic" src="~/profile.jpg" alt="Profile" style="width:32px;height:32px;border-radius:999px;object-fit:cover;" />
+                                <span class="d-none d-md-inline">@User.Identity?.Name</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                        <i class="fa-solid fa-user-gear me-2"></i>Account
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form class="px-2" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                        <button type="submit" class="btn btn-danger w-100">
+                                            <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center gap-2">
+                            <a class="btn btn-outline-light btn-sm" asp-area="Identity" asp-page="/Account/Login">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i>Login
+                            </a>
+                            <a class="btn btn-success btn-sm" asp-area="Identity" asp-page="/Account/Register">
+                                <i class="fa-solid fa-user-plus me-1"></i>Register
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
@@ -66,7 +105,7 @@
         </div>
 
     </div>
-   
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
