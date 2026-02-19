@@ -19,8 +19,10 @@ namespace ExpenseTracker.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login()
+        public IActionResult Login(string? expired)
         {
+            if (expired == "true")
+                ViewBag.SessionExpired = "true";
             return View();
         }
 
@@ -40,9 +42,11 @@ namespace ExpenseTracker.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string? expired)
         {
             await _signInManager.SignOutAsync();
+            if (expired == "true")
+                return RedirectToAction("Login", new { expired = "true" });
             return RedirectToAction("Login");
         }
     }

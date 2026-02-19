@@ -1,55 +1,298 @@
 ﻿@{
     Layout = null;
+    var sessionExpired = ViewBag.SessionExpired as string;
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Expense Tracker</title>
+    <title>Expense Tracker — Login</title>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
     <style>
+        /* ===== Theme Variables ===== */
         :root {
-            --login-bg: #212529;
-            --login-card-bg: #ffffff;
-            --login-text: #212529;
-            --login-muted: #6c757d;
+            --login-bg: #0f1117;
+            --login-panel: #181c25;
+            --login-card: #1e2430;
+            --login-card-border: rgba(255,255,255,0.06);
+            --login-input-bg: #262c38;
+            --login-input-border: rgba(255,255,255,0.1);
+            --login-input-focus: #0e8d76;
+            --login-text: #f1f3f5;
+            --login-text-muted: #8b95a5;
+            --login-accent: #0e8d76;
+            --login-accent-hover: #0ba488;
+            --login-icon-bg: rgba(14,141,118,0.12);
+            --login-icon-color: #54ffa9;
+            --login-blob1: rgba(14,141,118,0.08);
+            --login-blob2: rgba(42,161,255,0.06);
+            --login-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            --login-toggle-bg: rgba(255,255,255,0.08);
+            --login-toggle-color: #fff;
         }
+
         [data-theme="light"] {
-            --login-bg: #f4f6f8;
+            --login-bg: #eef1f5;
+            --login-panel: #ffffff;
+            --login-card: #ffffff;
+            --login-card-border: rgba(0,0,0,0.08);
+            --login-input-bg: #f4f6f8;
+            --login-input-border: #dfe3e8;
+            --login-input-focus: #0e8d76;
+            --login-text: #212b36;
+            --login-text-muted: #637381;
+            --login-accent: #0e8d76;
+            --login-accent-hover: #0ba488;
+            --login-icon-bg: rgba(14,141,118,0.1);
+            --login-icon-color: #0e8d76;
+            --login-blob1: rgba(14,141,118,0.06);
+            --login-blob2: rgba(42,161,255,0.05);
+            --login-shadow: 0 20px 60px rgba(145,158,171,0.2);
+            --login-toggle-bg: rgba(0,0,0,0.06);
+            --login-toggle-color: #212b36;
         }
-        body.login-body {
-            background-color: var(--login-bg);
-            transition: background-color 0.3s;
+
+        /* ===== Base ===== */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: var(--login-bg);
+            color: var(--login-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.35s;
         }
+
+        /* ===== Background blobs ===== */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            top: -120px; left: -120px;
+            background: var(--login-blob1);
+            filter: blur(100px);
+        }
+        body::after {
+            width: 400px; height: 400px;
+            bottom: -100px; right: -60px;
+            background: var(--login-blob2);
+            filter: blur(80px);
+        }
+
+        /* ===== Login card ===== */
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            margin: 1rem;
+            background: var(--login-card);
+            border: 1px solid var(--login-card-border);
+            border-radius: 20px;
+            box-shadow: var(--login-shadow);
+            padding: 2.5rem 2rem 2rem;
+            animation: cardIn 0.5s ease;
+        }
+
+        @@keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Logo / header */
+        .login-logo {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+            margin-bottom: 0.75rem;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+        .login-header h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .login-header p {
+            color: var(--login-text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Icon circle */
+        .login-icon-circle {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: var(--login-icon-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        .login-icon-circle i {
+            font-size: 1.5rem;
+            color: var(--login-icon-color);
+        }
+
+        /* Form inputs */
+        .login-group { margin-bottom: 1.25rem; position: relative; }
+        .login-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--login-text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .login-group .input-wrap {
+            position: relative;
+        }
+        .login-group .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--login-text-muted);
+            font-size: 0.95rem;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .login-group input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border-radius: 12px;
+            border: 1px solid var(--login-input-border);
+            background: var(--login-input-bg);
+            color: var(--login-text);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .login-group input:focus {
+            border-color: var(--login-input-focus);
+            box-shadow: 0 0 0 3px rgba(14,141,118,0.15);
+        }
+        .login-group input:focus + i,
+        .login-group input:focus ~ i { color: var(--login-accent); }
+        .login-group input::placeholder { color: var(--login-text-muted); opacity: 0.6; }
+
+        /* Password toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--login-text-muted);
+            cursor: pointer;
+            pointer-events: all;
+            font-size: 0.95rem;
+            padding: 4px;
+        }
+        .pw-toggle:hover { color: var(--login-accent); }
+
+        /* Submit */
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            background: var(--login-accent);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .login-btn:hover { background: var(--login-accent-hover); }
+        .login-btn:active { transform: scale(0.98); }
+
+        /* Error alert */
+        .login-alert {
+            background: rgba(255,86,48,0.12);
+            color: #ff5630;
+            border: 1px solid rgba(255,86,48,0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 1.25rem;
+            animation: shake 0.35s ease;
+        }
+        .login-alert.info-alert {
+            background: rgba(255,171,0,0.12);
+            color: #ffab00;
+            border-color: rgba(255,171,0,0.2);
+            animation: none;
+        }
+        @@keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        /* Theme toggle */
         .theme-toggle-login {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.15);
+            background: var(--login-toggle-bg);
             border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            padding: 10px 12px;
+            color: var(--login-toggle-color);
+            font-size: 1.1rem;
+            width: 44px; height: 44px;
             border-radius: 50%;
             cursor: pointer;
-            transition: background 0.2s;
-            z-index: 100;
-        }
-        [data-theme="light"] .theme-toggle-login {
-            background: rgba(0,0,0,0.08);
-            color: #212529;
+            transition: background 0.2s, transform 0.2s;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .theme-toggle-login:hover {
-            background: rgba(255,255,255,0.25);
+            transform: scale(1.1);
+            background: var(--login-toggle-bg);
+            filter: brightness(1.3);
         }
-        [data-theme="light"] .theme-toggle-login:hover {
-            background: rgba(0,0,0,0.15);
+
+        /* Footer text */
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.78rem;
+            color: var(--login-text-muted);
+        }
+
+        /* Responsive */
+        @@media (max-width: 480px) {
+            .login-card { padding: 2rem 1.25rem 1.5rem; margin: 0.75rem; }
+            .login-header h2 { font-size: 1.25rem; }
         }
     </style>
     <script>
-        // Prevent FOUC: apply stored theme immediately
         (function() {
             try {
                 var t = localStorage.getItem('expense-tracker-theme');
@@ -58,62 +301,95 @@
         })();
     </script>
 </head>
-<body class="login-body d-flex align-items-center justify-content-center" style="height:100vh;">
+<body>
 
     <button class="theme-toggle-login" id="loginThemeToggle" aria-label="Toggle theme">
         <i id="loginThemeIcon" class="fa-solid fa-sun"></i>
     </button>
 
-    <div class="card shadow-lg mx-3" style="max-width:380px;width:100%;border-radius:15px;">
-        <div class="card-body p-4">
-
-            <div class="text-center mb-3">
-                <h4>Expense Tracker</h4>
-                <p class="text-muted">Login to continue</p>
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-icon-circle">
+                <i class="fa-solid fa-wallet"></i>
             </div>
+            <h2>Welcome Back</h2>
+            <p>Sign in to your Expense Tracker</p>
+        </div>
 
-            @if (ViewBag.Error != null)
-            {
-                <div class="alert alert-danger text-center">@ViewBag.Error</div>
-            }
+        @if (sessionExpired == "true")
+        {
+            <div class="login-alert info-alert">
+                <i class="fa-solid fa-clock me-1"></i> Your session has expired. Please log in again.
+            </div>
+        }
 
-            <form method="post">
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input name="username" class="form-control form-control-lg" />
+        @if (ViewBag.Error != null)
+        {
+            <div class="login-alert">
+                <i class="fa-solid fa-circle-exclamation me-1"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form method="post" autocomplete="off">
+            <div class="login-group">
+                <label for="username">Email</label>
+                <div class="input-wrap">
+                    <input type="email" id="username" name="username"
+                           placeholder="admin@expense.com" required autofocus />
+                    <i class="fa-solid fa-envelope"></i>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input name="password" type="password" class="form-control form-control-lg" />
+            </div>
+            <div class="login-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="password" name="password"
+                           placeholder="Enter your password" required />
+                    <i class="fa-solid fa-lock"></i>
+                    <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1" aria-label="Show password">
+                        <i class="fa-solid fa-eye" id="pwToggleIcon"></i>
+                    </button>
                 </div>
-                <button class="btn btn-primary w-100 btn-lg">Login</button>
-            </form>
+            </div>
+            <button type="submit" class="login-btn">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Sign In
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <i class="fa-solid fa-shield-halved me-1"></i> Secured with encrypted authentication
         </div>
     </div>
 
     <script>
         (function() {
+            // Theme toggle
             var KEY = 'expense-tracker-theme';
             var icon = document.getElementById('loginThemeIcon');
             var theme = localStorage.getItem(KEY) || 'dark';
 
-            function apply(t) {
+            function applyTheme(t) {
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'light') {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                } else {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                }
+                icon.classList.remove('fa-sun', 'fa-moon');
+                icon.classList.add(t === 'light' ? 'fa-moon' : 'fa-sun');
             }
-            apply(theme);
+            applyTheme(theme);
 
             document.getElementById('loginThemeToggle').addEventListener('click', function() {
-                var current = document.documentElement.getAttribute('data-theme') || 'dark';
-                var next = current === 'dark' ? 'light' : 'dark';
+                var cur = document.documentElement.getAttribute('data-theme') || 'dark';
+                var next = cur === 'dark' ? 'light' : 'dark';
                 try { localStorage.setItem(KEY, next); } catch(e) {}
-                apply(next);
+                applyTheme(next);
+            });
+
+            // Password visibility toggle
+            var pwInput = document.getElementById('password');
+            var pwIcon = document.getElementById('pwToggleIcon');
+            document.getElementById('pwToggle').addEventListener('click', function() {
+                var show = pwInput.type === 'password';
+                pwInput.type = show ? 'text' : 'password';
+                pwIcon.classList.remove('fa-eye', 'fa-eye-slash');
+                pwIcon.classList.add(show ? 'fa-eye-slash' : 'fa-eye');
             });
         })();
     </script>
