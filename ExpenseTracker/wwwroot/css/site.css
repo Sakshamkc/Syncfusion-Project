@@ -350,3 +350,338 @@ img.profile-pic {
         padding: 5px;
         
     }
+
+/* ===== RESPONSIVE / MOBILE ===== */
+
+/* Mobile hamburger toggle button */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+    .mobile-menu-toggle:hover {
+        background-color: #48545f14;
+    }
+
+/* Sidebar overlay backdrop */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+/* ---- Small screens (max-width: 991px) ---- */
+@media (max-width: 991px) {
+    .mobile-menu-toggle {
+        display: inline-block;
+    }
+
+    /* Hide the desktop sidebar toggler on mobile */
+    #sidebar-toggler {
+        display: none !important;
+    }
+
+    /* Sidebar becomes a fixed overlay instead of docked */
+    #sidebar,
+    #sidebar.e-sidebar,
+    #sidebar.e-sidebar.e-left,
+    #sidebar.e-open,
+    #sidebar.e-close {
+        position: fixed !important;
+        z-index: 1050 !important;
+        width: 280px !important;
+        height: 100vh !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        visibility: visible !important;
+    }
+
+    #sidebar.mobile-open {
+        transform: translateX(0%) !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+
+    /* Override Syncfusion's inline margin-left on the dock target */
+    .dock-target {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Remove hardcoded left margins from inner elements */
+    .main-content {
+        margin-left: 0 !important;
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto !important;
+    }
+
+    nav.navbar {
+        margin-left: 0 !important;
+    }
+
+    /* Allow body to scroll */
+    body {
+        overflow: auto !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Dashboard summary widgets: 1-column on small screens */
+    .widget.summary {
+        margin-bottom: 1rem;
+    }
+
+        .widget.summary > div:first-child {
+            padding: 0.75rem !important;
+        }
+
+    .widget .display-6 {
+        font-size: 1.5rem;
+    }
+
+    /* Reduce e-bigger font for mobile */
+    .e-bigger {
+        font-size: large;
+    }
+
+    /* Profile wrapper compact */
+    .profile-wrapper {
+        padding: 10px 14px;
+    }
+
+    /* Shrink grid font */
+    .e-grid {
+        font-size: 0.85rem;
+    }
+
+    /* Make page header action button smaller */
+    .btn-success {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    /* Container padding adjustments */
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    /* Syncfusion chart responsive */
+    #doughnutchart, #spline-chart {
+        width: 100% !important;
+    }
+
+    /* Grid horizontal scroll on mobile */
+    .e-grid .e-gridcontent {
+        overflow-x: auto;
+    }
+}
+
+/* ---- Extra-small screens (max-width: 576px) ---- */
+@media (max-width: 576px) {
+    .e-bigger {
+        font-size: medium;
+    }
+
+    /* Tighten nav padding */
+    nav.navbar .container-fluid {
+        padding: 4px 10px !important;
+    }
+
+    /* Summary widgets: stack vertically, compact layout */
+    .widget.summary {
+        flex-direction: row !important;
+    }
+
+        .widget.summary > div:first-child {
+            padding: 0.75rem 1rem !important;
+            border-radius: 1rem 0 0 1rem !important;
+            min-width: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .widget.summary > div:last-child {
+            padding: 0.5rem 0.75rem;
+        }
+
+    /* Override the p-5 on the icon container for mobile */
+    .widget.summary .p-5 {
+        padding: 0.75rem 1rem !important;
+    }
+
+    .widget .display-6 {
+        font-size: 1.25rem;
+    }
+
+    .widget .lead {
+        font-size: 0.85rem;
+    }
+
+    .widget .fa-2xl {
+        font-size: 1.25em !important;
+    }
+
+    /* Chart widget padding */
+    .widget.chart {
+        padding: 2px;
+        margin-bottom: 1rem;
+    }
+
+    .widget.chart .p-4 {
+        padding: 0.75rem !important;
+    }
+
+    /* Login card responsive */
+    .card {
+        width: 95% !important;
+        max-width: 380px;
+    }
+
+    /* Form widget padding */
+    .widget.p-5 {
+        padding: 1.25rem !important;
+    }
+
+    /* Hide decorative side columns on very small screens */
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* ========== Nepali Date Picker Calendar ========== */
+.np-datepicker-wrapper {
+    position: relative;
+}
+
+.np-calendar-wrap {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1050;
+    background: #2b3544;
+    border: 1px solid #3d4a5c;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    padding: 12px;
+    min-width: 300px;
+    margin-top: 4px;
+}
+
+.np-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.np-cal-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.np-cal-nav {
+    background: none;
+    border: 1px solid #4a5568;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.np-cal-nav:hover {
+    background: #3d4a5c;
+}
+
+.np-cal-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.np-cal-table th {
+    color: #8899aa;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px;
+}
+
+.np-cal-table td {
+    text-align: center;
+    padding: 2px;
+}
+
+.np-cal-day {
+    background: none;
+    border: none;
+    color: #cfd8e3;
+    font-size: 0.85rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.np-cal-day:hover {
+    background: #3d4a5c;
+    color: #fff;
+}
+
+.np-cal-day.np-cal-today {
+    border: 1px solid #0e8d76;
+    color: #54ffa9;
+}
+
+.np-cal-day.np-cal-selected {
+    background: #0e8d76;
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Nepali date text input styling (Syncfusion-like) */
+.np-date-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #4a5568;
+    color: #fff;
+    font-size: 1rem;
+    padding: 8px 0;
+    outline: none;
+    font-family: "Inter";
+}
+
+.np-date-input:focus {
+    border-bottom-color: #0e8d76;
+}
+
+.np-date-label {
+    display: block;
+    color: #8899aa;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+    font-weight: 600;
+}

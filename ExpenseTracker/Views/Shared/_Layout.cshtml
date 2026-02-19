@@ -15,11 +15,17 @@
     @inject SignInManager<IdentityUser> SignInManager
     @inject UserManager<IdentityUser> UserManager
 
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <partial name="_sidebar" />
     <div class="dock-target">
         <nav class="navbar sticky-top">
             <div class="container-fluid py-2 px-4">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
 
                 <div class="d-flex align-items-center gap-3">
                     <i class="fa-solid fa-bell"></i>
@@ -61,15 +67,15 @@
 
 
         <div class="main-content">
-            <div class="container mt-5">
+            <div class="container-fluid mt-3 mt-md-5 px-3 px-md-4">
                 <div class="row justify-content-center">
-                    <div class="@(ViewData["isDashboard"] == null?"col-md-10":"col-md-12")">
+                    <div class="@(ViewData["isDashboard"] == null?"col-12 col-md-10":"col-12")">
                         <main role="main" class="pb-3">
                             @if (ViewData["isDashboard"] == null)
                             {
                                 <div class="row">
-                                    <div class="col-md-7">
-                                        <div class="d-flex flex-column mb-5">
+                                    <div class="col-12 col-md-7">
+                                        <div class="d-flex flex-column mb-3 mb-md-5">
                                             <div class="d-flex mb-1">
                                                 <div class="flex-grow-1">
                                                     <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
@@ -104,5 +110,118 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.syncfusion.com/ej2/20.3.47/dist/ej2.min.js"></script>
     <ejs-scripts></ejs-scripts>
+    <script>
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggleBtn = document.getElementById('mobileMenuToggle');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var dockTarget = document.querySelector('.dock-target');
+
+            function isMobile() {
+                return window.innerWidth <= 991;
+            }
+
+            // On mobile: disable Syncfusion dock behavior, reset dock target margins
+            function handleMobileSetup() {
+                if (isMobile() && sidebar) {
+                    // Disable dock so Syncfusion stops injecting margin-left
+                    if (sidebar.ej2_instances && sidebar.ej2_instances[0]) {
+                        var sidebarObj = sidebar.ej2_instances[0];
+                        sidebarObj.enableDock = false;
+                        sidebarObj.type = 'Over';
+                    }
+                    // Make sure sidebar is NOT display:none or visibility:hidden
+                    sidebar.style.visibility = 'visible';
+                    sidebar.style.display = 'block';
+                    // Remove mobile-open so it starts closed
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                    // Reset dock target
+                    if (dockTarget) {
+                        dockTarget.style.marginLeft = '0px';
+                        dockTarget.style.width = '100%';
+                    }
+                }
+            }
+
+            handleMobileSetup();
+
+            // MutationObserver: Syncfusion may re-apply inline styles
+            if (dockTarget) {
+                var observer = new MutationObserver(function () {
+                    if (isMobile()) {
+                        if (dockTarget.style.marginLeft !== '0px') {
+                            dockTarget.style.marginLeft = '0px';
+                            dockTarget.style.width = '100%';
+                        }
+                    }
+                });
+                observer.observe(dockTarget, { attributes: true, attributeFilter: ['style'] });
+            }
+
+            // Watch sidebar for Syncfusion resetting visibility
+            if (sidebar) {
+                var sidebarObserver = new MutationObserver(function () {
+                    if (isMobile()) {
+                        if (sidebar.style.visibility === 'hidden') {
+                            sidebar.style.visibility = 'visible';
+                        }
+                        if (sidebar.style.display === 'none') {
+                            sidebar.style.display = 'block';
+                        }
+                    }
+                });
+                sidebarObserver.observe(sidebar, { attributes: true, attributeFilter: ['style'] });
+            }
+
+            // Resize handler
+            var resizeTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    if (isMobile()) {
+                        handleMobileSetup();
+                    } else {
+                        // Restore desktop sidebar dock behavior
+                        if (sidebar && sidebar.ej2_instances && sidebar.ej2_instances[0]) {
+                            var sidebarObj = sidebar.ej2_instances[0];
+                            sidebarObj.enableDock = true;
+                            sidebarObj.type = 'Push';
+                            sidebarObj.show();
+                        }
+                    }
+                }, 150);
+            });
+
+            // Hamburger button click
+            if (toggleBtn && sidebar && overlay) {
+                toggleBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var isOpen = sidebar.classList.contains('mobile-open');
+                    if (isOpen) {
+                        sidebar.classList.remove('mobile-open');
+                        overlay.classList.remove('active');
+                    } else {
+                        // Ensure sidebar is visible before opening
+                        sidebar.style.visibility = 'visible';
+                        sidebar.style.display = 'block';
+                        sidebar.classList.add('mobile-open');
+                        overlay.classList.add('active');
+                    }
+                    // Keep dock target margin at 0
+                    if (dockTarget) {
+                        dockTarget.style.marginLeft = '0px';
+                    }
+                });
+
+                overlay.addEventListener('click', function () {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

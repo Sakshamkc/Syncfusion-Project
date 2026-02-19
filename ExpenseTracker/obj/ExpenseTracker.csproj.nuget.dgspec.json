@@ -1,32 +1,38 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\saksh\\Source\\Repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj": {}
+    "D:\\Users\\saksham.kc\\source\\repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\saksh\\Source\\Repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj": {
+    "D:\\Users\\saksham.kc\\source\\repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\saksh\\Source\\Repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj",
+        "projectUniqueName": "D:\\Users\\saksham.kc\\source\\repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj",
         "projectName": "ExpenseTracker",
-        "projectPath": "C:\\Users\\saksh\\Source\\Repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj",
-        "packagesPath": "C:\\Users\\saksh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\saksh\\Source\\Repos\\Syncfusion-Project\\ExpenseTracker\\obj\\",
+        "projectPath": "D:\\Users\\saksham.kc\\source\\repos\\Syncfusion-Project\\ExpenseTracker\\ExpenseTracker.csproj",
+        "packagesPath": "D:\\Users\\saksham.kc\\.nuget\\packages\\",
+        "outputPath": "D:\\Users\\saksham.kc\\source\\repos\\Syncfusion-Project\\ExpenseTracker\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\saksh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "D:\\Users\\saksham.kc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          ".net6"
+          "net8.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://elizacloud.jfrog.io/artifactory/api/nuget/v3/nuget-eliza-build": {},
+          "https://elizacloud.jfrog.io/artifactory/api/nuget/v3/nuget-eliza-virtual": {}
         },
         "frameworks": {
-          "net6.0": {
-            "targetAlias": ".net6",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -34,33 +40,53 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
-        "net6.0": {
-          "targetAlias": ".net6",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[8.0.23, )"
+            },
             "Microsoft.Bcl.AsyncInterfaces": {
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.23, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.23, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[8.0.23, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
-              "version": "[3.1.5, )"
+              "version": "[8.0.23, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Syncfusion.EJ2.AspNet.Core": {
               "target": "Package",
@@ -86,7 +112,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

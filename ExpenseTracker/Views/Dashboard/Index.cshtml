@@ -6,7 +6,7 @@
 }
 
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary income">
             <div class="d-flex flex-column justify-content-center p-5">
                 <i class="fa-solid fa-indian-rupee-sign fa-2xl"></i>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary expense">
             <div class="d-flex flex-column justify-content-center p-5">
                 <i class="fa-solid fa-indian-rupee-sign fa-2xl"></i>
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary balance">
             <div class="d-flex flex-column justify-content-center p-5">
                 <i class="fa-solid fa-indian-rupee-sign fa-2xl"></i>
@@ -42,7 +42,7 @@
     
 </div>
 <div class="row mb-4">
-    <div class="col-md-4">
+    <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="widget chart">
             <div class="p-4">
                 <h5 class="fw-bold" style="text-align:center">Expense By Category</h5>
@@ -61,7 +61,7 @@
             </ejs-accumulationchart>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-12 col-md-8 mb-3 mb-md-0">
         <div class="widget chart">
             <div class="p-4">
                 <h5 class="fw-bold" style="text-align:center">Income vs Expense</h5>
@@ -92,7 +92,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
         <div class="widget">
             <div class="p-4">
                 <h5 class="fw-bold" style="text-align:center">Recent Transactions</h5>
@@ -102,7 +102,7 @@
                           dataSource="@ViewBag.RecentTransactions" gridLines="None">
                     <e-grid-columns>
                         <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
-                        <e-grid-column headerText="Date" field="Date" width="130px" format="yyyy-MM-dd" type="date" textAlign="Left"></e-grid-column>
+                        <e-grid-column headerText="Date (BS)" field="NepaliDate" width="130px" textAlign="Left"></e-grid-column>
                         <e-grid-column headerText="Amount" field="FormattedAccount" width="110px" textAlign="Right"></e-grid-column>
                     </e-grid-columns>
                     
@@ -110,7 +110,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-12 col-md-6 mb-3 mb-md-0 hide-mobile">
         <div class="widget h-100">
             <div class="d-flex justify-content-center align-items-center h-100">
                 <span><i class="fa-solid fa-plus fa-2xl"></i> Widget</span>

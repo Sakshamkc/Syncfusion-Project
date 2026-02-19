@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Models;
+using ExpenseTracker.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,19 +25,21 @@ namespace ExpenseTracker.Controllers
         DateTime StartDate = DateTime.Today.AddDays(-6);
         DateTime EndDate = DateTime.Today;
 
-        
+
         public async Task<IActionResult> Index()
         {
-            var culture = new CultureInfo("ne-NP");
+            var culture = CultureInfo.CreateSpecificCulture("ne-NP");
+            culture.NumberFormat.CurrencySymbol = "Rs";
+            culture.NumberFormat.CurrencyPositivePattern = 2;
+            culture.NumberFormat.CurrencyNegativePattern = 8;
             List<Transaction> SelectedTransactions = await _context.Transactions.Include(x => x.Category).Where(y => y.Date >= StartDate && y.Date <= EndDate).ToListAsync();
             int TotalIncome = SelectedTransactions.Where(i => i.Category.Type == "Income").Sum(j => j.Amount);
-            ViewBag.TotalIncome = TotalIncome.ToString("C0",culture);
+            ViewBag.TotalIncome = TotalIncome.ToString("C0", culture);
 
             int TotalExpense = SelectedTransactions.Where(i => i.Category.Type == "Expense").Sum(j => j.Amount);
-            ViewBag.TotalExpense = TotalExpense.ToString("C0",culture);
+            ViewBag.TotalExpense = TotalExpense.ToString("C0", culture);
 
             int Balance = TotalIncome - TotalExpense;
-            culture.NumberFormat.CurrencyNegativePattern = 1;
 
             ViewBag.Balance = string.Format(culture, "{0:C0}", Balance);
             //Doughnut Chart - Expense By Category
@@ -58,7 +61,7 @@ namespace ExpenseTracker.Controllers
                 .GroupBy(j => j.Date)
                 .Select(k => new SplineChartData()
                 {
-                    day = k.First().Date.ToString("dd-MMM"),
+                    day = NepaliDateHelper.FormatBsDateShort(k.First().Date),
                     income = k.Sum(l => l.Amount)
                 })
                 .ToList();
@@ -68,19 +71,21 @@ namespace ExpenseTracker.Controllers
                .GroupBy(j => j.Date)
                .Select(k => new SplineChartData()
                {
-                   day = k.First().Date.ToString("dd-MMM"),
+                   day = NepaliDateHelper.FormatBsDateShort(k.First().Date),
                    expense = k.Sum(l => l.Amount)
                })
                .ToList();
 
             string[] last7Days = Enumerable.Range(0, 7)
-                .Select(i => StartDate.AddDays(i).ToString("dd-MMM")).ToArray();
+                .Select(i => NepaliDateHelper.FormatBsDateShort(StartDate.AddDays(i))).ToArray();
 
-            ViewBag.SplineChartData = from day in last7Days 
+            ViewBag.SplineChartData = from day in last7Days
                                       join income in IncomeSummary on day equals income.day
-                                      into dayIncomeJoined from income in dayIncomeJoined.DefaultIfEmpty()
+                                      into dayIncomeJoined
+                                      from income in dayIncomeJoined.DefaultIfEmpty()
                                       join expense in ExpenseSummary on day equals expense.day
-                                      into ExpenseJoined from expense in ExpenseJoined.DefaultIfEmpty()
+                                      into ExpenseJoined
+                                      from expense in ExpenseJoined.DefaultIfEmpty()
                                       select new
                                       {
                                           day = day,

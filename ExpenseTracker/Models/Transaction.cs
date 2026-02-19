@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpenseTracker.Helpers;
 
 namespace ExpenseTracker.Models
 {
@@ -24,13 +25,13 @@ namespace ExpenseTracker.Models
         public DateTime Date { get; set; } = DateTime.Now;
 
         [NotMapped]
-        public string? CategoryTitleWithIcon 
-        { 
+        public string? CategoryTitleWithIcon
+        {
             get
             {
                 return Category == null ? "" : Category.Icon + "" + Category.Title;
             }
-                
+
         }
 
         [NotMapped]
@@ -38,12 +39,40 @@ namespace ExpenseTracker.Models
         {
             get
             {
-                var culture = new CultureInfo("ne-NP");
+                var culture = CultureInfo.CreateSpecificCulture("ne-NP");
+                culture.NumberFormat.CurrencySymbol = "Rs";
+                culture.NumberFormat.CurrencyPositivePattern = 2;
                 var sign = (Category == null || Category.Type == "Expense") ? "- " : "+ ";
 
                 return sign + Amount.ToString("C0", culture);
             }
 
+        }
+
+        /// <summary>
+        /// Nepali (Bikram Sambat) date string, e.g. "2081-10-06"
+        /// </summary>
+        [NotMapped]
+        public string? NepaliDate
+        {
+            get
+            {
+                try { return NepaliDateHelper.FormatBsDate(Date); }
+                catch { return Date.ToString("yyyy-MM-dd"); }
+            }
+        }
+
+        /// <summary>
+        /// Short Nepali date, e.g. "Mag-06-81"
+        /// </summary>
+        [NotMapped]
+        public string? NepaliDateShort
+        {
+            get
+            {
+                try { return NepaliDateHelper.FormatBsDateShort(Date); }
+                catch { return Date.ToString("MMM-dd-yy"); }
+            }
         }
     }
 }

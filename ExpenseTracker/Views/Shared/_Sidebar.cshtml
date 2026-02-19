@@ -78,11 +78,24 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded',function (){
+    document.addEventListener('DOMContentLoaded', function () {
         dockBar = document.getElementById('sidebar').ej2_instances[0];
         document.getElementById('sidebar-toggler').onclick = function () {
             dockBar.toggle();
         };
+
+        // Close sidebar on mobile when a menu link is clicked
+        document.getElementById('sidebar').addEventListener('click', function (e) {
+            var anchor = e.target.closest('a, .e-anchor-wrap');
+            if (anchor && window.innerWidth <= 991) {
+                var sidebar = document.getElementById('sidebar');
+                var overlay = document.getElementById('sidebarOverlay');
+                var dockTarget = document.querySelector('.dock-target');
+                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (overlay) overlay.classList.remove('active');
+                if (dockTarget) dockTarget.style.marginLeft = '0px';
+            }
+        });
     });
 
 </script>

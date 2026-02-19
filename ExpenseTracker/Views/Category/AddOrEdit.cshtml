@@ -1,20 +1,34 @@
 ﻿@model ExpenseTracker.Models.Category
 
 @{
-    ViewData["PageTitle"]= Model.CategoryId == 0 ? "Create A Category":"Edit Category";
+    ViewData["PageTitle"] = Model.CategoryId == 0 ? "Create A Category" : "Edit Category";
 }
 
 <div class="row">
-    <div class="col-md-7">
+    <div class="col-12 col-md-7 mb-3 mb-md-0">
         <div class="widget p-5" style="background-color:#212b36">
             <form asp-action="AddOrEdit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
                 <div class="mb-3">
                     <div class='e-btn-group custom-rbt-group'>
-                        <input type="radio" id="radioleft" name="Type" value="Expense" checked="@(Model.Type=="Expense")" />
+                        @if (Model.Type == "Expense")
+                        {
+                            <input type="radio" id="radioleft" name="Type" value="Expense" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" id="radioleft" name="Type" value="Expense" />
+                        }
                         <label class="e-btn" for="radioleft">Expense</label>
-                        <input type="radio" id="radiomiddle" name="Type" value="Income" checked="@(Model.Type ==" Income")" />
+                        @if (Model.Type == "Income")
+                        {
+                            <input type="radio" id="radiomiddle" name="Type" value="Income" checked />
+                        }
+                        else
+                        {
+                            <input type="radio" id="radiomiddle" name="Type" value="Income" />
+                        }
                         <label class="e-btn" for="radiomiddle">Income</label>
                     </div>
                 </div>
@@ -24,7 +38,7 @@
                 </div>
                 <div class="mb-3">
                     <ejs-textbox id="icon" placeholder="Icon" ejs-for="Icon" floatLabelType="Always"></ejs-textbox>
-                    
+
                 </div>
 
                 <ejs-button id="submit" type="submit" content="Submit" cssClass="e-success"></ejs-button>
@@ -32,7 +46,7 @@
         </div>
 
     </div>
-    <div class="col-md-5">
+    <div class="col-12 col-md-5 hide-mobile">
         <div class="widget h-100 d-flex justify-content-center align-items-center">
             <i class="fa-solid fa-shapes fa-2xl"></i>
         </div>
