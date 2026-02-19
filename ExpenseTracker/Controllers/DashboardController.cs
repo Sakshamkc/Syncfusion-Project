@@ -99,7 +99,96 @@ namespace ExpenseTracker.Controllers
                 .Take(5)
                 .ToListAsync();
 
+            // Nepali Calendar Data — current BS month
+            var todayBs = NepaliDateHelper.AdToBs(DateTime.Today);
+            ViewBag.BsYear = todayBs.Year;
+            ViewBag.BsMonth = todayBs.Month;
+            ViewBag.BsDay = todayBs.Day;
+            ViewBag.BsMonthName = NepaliDateHelper.GetMonthName(todayBs.Month);
+            ViewBag.BsDaysInMonth = NepaliDateHelper.GetBsMonthDays(todayBs.Year, todayBs.Month);
+
+            // Get AD range for this BS month (1st to last day)
+            int bsDaysInMonth = NepaliDateHelper.GetBsMonthDays(todayBs.Year, todayBs.Month);
+            ViewBag.BsDaysInMonth = bsDaysInMonth;
+            var bsMonthStartAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, 1);
+            var bsMonthEndAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, bsDaysInMonth);
+
+            // Expense totals per day in this BS month
+            var monthTransactions = await _context.Transactions
+                .Include(t => t.Category)
+                .Where(t => t.Date >= bsMonthStartAd && t.Date <= bsMonthEndAd)
+                .ToListAsync();
+
+            // Build a dictionary: BS day number → { income, expense }
+            var calendarData = new Dictionary<int, int[]>(); // [income, expense]
+            foreach (var t in monthTransactions)
+            {
+                var bs = NepaliDateHelper.AdToBs(t.Date);
+                if (bs.Year == todayBs.Year && bs.Month == todayBs.Month)
+                {
+                    if (!calendarData.ContainsKey(bs.Day))
+                        calendarData[bs.Day] = new int[] { 0, 0 };
+
+                    if (t.Category?.Type == "Income")
+                        calendarData[bs.Day][0] += t.Amount;
+                    else
+                        calendarData[bs.Day][1] += t.Amount;
+                }
+            }
+            ViewBag.CalendarData = calendarData;
+
+            // Day of week for the 1st of BS month (0=Sun)
+            ViewBag.BsFirstDayOfWeek = (int)bsMonthStartAd.DayOfWeek;
+
             return View();
+        }
+
+        /// <summary>
+        /// AJAX endpoint: returns calendar data for a given BS year/month.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> CalendarData(int bsYear, int bsMonth)
+        {
+            try
+            {
+                int daysInMonth = NepaliDateHelper.GetBsMonthDays(bsYear, bsMonth);
+                var monthStartAd = NepaliDateHelper.BsToAd(bsYear, bsMonth, 1);
+                var monthEndAd = NepaliDateHelper.BsToAd(bsYear, bsMonth, daysInMonth);
+                int firstDow = (int)monthStartAd.DayOfWeek;
+
+                var txns = await _context.Transactions
+                    .Include(t => t.Category)
+                    .Where(t => t.Date >= monthStartAd && t.Date <= monthEndAd)
+                    .ToListAsync();
+
+                var result = new Dictionary<string, int[]>();
+                foreach (var t in txns)
+                {
+                    var bs = NepaliDateHelper.AdToBs(t.Date);
+                    if (bs.Year == bsYear && bs.Month == bsMonth)
+                    {
+                        var key = bs.Day.ToString();
+                        if (!result.ContainsKey(key))
+                            result[key] = new int[] { 0, 0 };
+
+                        if (t.Category?.Type == "Income")
+                            result[key][0] += t.Amount;
+                        else
+                            result[key][1] += t.Amount;
+                    }
+                }
+
+                // Convert to anonymous objects for JSON
+                var txnJson = new Dictionary<string, object>();
+                foreach (var kv in result)
+                    txnJson[kv.Key] = new { income = kv.Value[0], expense = kv.Value[1] };
+
+                return Json(new { daysInMonth, firstDow, transactions = txnJson });
+            }
+            catch
+            {
+                return Json(new { daysInMonth = 30, firstDow = 0, transactions = new { } });
+            }
         }
     }
 

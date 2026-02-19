@@ -347,8 +347,7 @@ img.profile-pic {
     }
 
     .widget.chart {
-        padding: 5px;
-        
+        padding: 0;
     }
 
 /* ===== RESPONSIVE / MOBILE ===== */
@@ -684,4 +683,144 @@ img.profile-pic {
     font-size: 0.75rem;
     margin-bottom: 4px;
     font-weight: 600;
+}
+
+/* ========== Dashboard Nepali Calendar ========== */
+.nepali-calendar-widget {
+    overflow: hidden;
+}
+
+.np-dashboard-cal {
+    width: 100%;
+}
+
+.np-dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.np-dash-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.np-dash-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    table-layout: fixed;
+}
+
+.np-dash-table th {
+    color: #8899aa;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 6px 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.np-dash-table td {
+    vertical-align: top;
+    padding: 4px 3px;
+    min-height: 50px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.np-dash-cell {
+    background: #1e2733;
+    border-radius: 6px;
+    position: relative;
+}
+
+.np-dash-cell:hover {
+    background: #283444;
+}
+
+.np-dash-today {
+    background: #1a3a30 !important;
+    outline: 1px solid #0e8d76;
+}
+
+.np-dash-day-num {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #cfd8e3;
+    padding: 2px 4px;
+    text-align: right;
+}
+
+.np-dash-today .np-dash-day-num {
+    color: #54ffa9;
+}
+
+.np-dash-amount {
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0 4px 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-dash-amount.income-amt {
+    color: #54ffa9;
+}
+
+.np-dash-amount.expense-amt {
+    color: #ff6b6b;
+}
+
+.np-dash-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.75rem;
+    color: #8899aa;
+}
+
+.np-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.np-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.np-legend-dot.income-dot {
+    background: #54ffa9;
+}
+
+.np-legend-dot.expense-dot {
+    background: #ff6b6b;
+}
+
+.np-legend-dot.today-dot {
+    background: transparent;
+    border: 2px solid #0e8d76;
+}
+
+/* Calendar responsive */
+@media (max-width: 576px) {
+    .np-dash-table th {
+        font-size: 0.6rem;
+        padding: 4px 1px;
+    }
+    .np-dash-day-num {
+        font-size: 0.7rem;
+    }
+    .np-dash-amount {
+        font-size: 0.5rem;
+    }
 }

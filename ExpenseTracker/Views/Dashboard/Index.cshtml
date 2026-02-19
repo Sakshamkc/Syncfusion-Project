@@ -3,6 +3,13 @@
 *@
 @{
     ViewData["isDashboard"] = "true";
+    var calendarData = (Dictionary<int, int[]>)ViewBag.CalendarData;
+    int bsYear = ViewBag.BsYear;
+    int bsMonth = ViewBag.BsMonth;
+    int bsDay = ViewBag.BsDay;
+    string bsMonthName = ViewBag.BsMonthName;
+    int daysInMonth = ViewBag.BsDaysInMonth;
+    int firstDow = ViewBag.BsFirstDayOfWeek;
 }
 
 <div class="row mb-4">
@@ -42,30 +49,91 @@
     
 </div>
 <div class="row mb-4">
-    <div class="col-12 col-md-4 mb-3 mb-md-0">
-        <div class="widget chart">
+    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex">
+        <div class="widget nepali-calendar-widget d-flex flex-column w-100">
             <div class="p-4">
-                <h5 class="fw-bold" style="text-align:center">Expense By Category</h5>
+                <h5 class="fw-bold" style="text-align:center">
+                    <i class="fa-solid fa-calendar-days me-2"></i>Nepali Calendar
+                </h5>
             </div>
-            <ejs-accumulationchart id="doughnutchart" background="#1a222b">
-                <e-accumulation-series-collection>
-                    <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"
-                                           xName="categoryTitleWithIcon" yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new string[]{"#0e8d76","#a4b219","#cb9b00","#8a442c","#0454b5","#7d0a0a","#822690","#4c2090","#313e93","#0096ac"})>
-                        <e-accumulationseries-datalabel name="formattedAmount" visible></e-accumulationseries-datalabel>
-                    </e-accumulation-series>
-                </e-accumulation-series-collection>
-                <e-accumulationchart-legendsettings position="Top" toggleVisibility="false">
-                    <e-legendsettings-textstyle color="#fff" size="1rem"></e-legendsettings-textstyle>
-                </e-accumulationchart-legendsettings>
-                <e-accumulationchart-tooltipsettings enable></e-accumulationchart-tooltipsettings>
-            </ejs-accumulationchart>
+            <div class="px-4 pb-4 flex-grow-1" id="nepaliCalendarContainer">
+                <div class="np-dashboard-cal">
+                    <div class="np-dash-header">
+                        <button type="button" class="np-cal-nav" id="calPrevMonth" title="Previous month">&laquo;</button>
+                        <span class="np-dash-title" id="calMonthTitle">@bsMonthName @bsYear</span>
+                        <button type="button" class="np-cal-nav" id="calNextMonth" title="Next month">&raquo;</button>
+                    </div>
+                    <table class="np-dash-table">
+                        <thead>
+                            <tr>
+                                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calBody">
+                            @{
+                                int dayCounter = 1;
+                                bool started = false;
+                                for (int row = 0; row < 6 && dayCounter <= daysInMonth; row++)
+                                {
+                                    <tr>
+                                    @for (int col = 0; col < 7; col++)
+                                    {
+                                        if (!started && col < firstDow)
+                                        {
+                                            <td></td>
+                                        }
+                                        else if (dayCounter <= daysInMonth)
+                                        {
+                                            started = true;
+                                            var isToday = (dayCounter == bsDay);
+                                            var hasData = calendarData.ContainsKey(dayCounter);
+                                            var cellClass = "np-dash-cell";
+                                            if (isToday) cellClass += " np-dash-today";
+                                            if (hasData) cellClass += " np-dash-has-data";
+
+                                            <td class="@cellClass">
+                                                <div class="np-dash-day-num">@dayCounter</div>
+                                                @if (hasData)
+                                                {
+                                                    var inc = calendarData[dayCounter][0];
+                                                    var exp = calendarData[dayCounter][1];
+                                                    if (inc > 0)
+                                                    {
+                                                        <div class="np-dash-amount income-amt">+@inc.ToString("N0")</div>
+                                                    }
+                                                    if (exp > 0)
+                                                    {
+                                                        <div class="np-dash-amount expense-amt">-@exp.ToString("N0")</div>
+                                                    }
+                                                }
+                                            </td>
+                                            dayCounter++;
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div class="np-dash-legend mt-3">
+                        <span class="np-legend-item"><span class="np-legend-dot income-dot"></span> Income</span>
+                        <span class="np-legend-item"><span class="np-legend-dot expense-dot"></span> Expense</span>
+                        <span class="np-legend-item"><span class="np-legend-dot today-dot"></span> Today</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-12 col-md-8 mb-3 mb-md-0">
-        <div class="widget chart">
+    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex">
+        <div class="widget chart d-flex flex-column w-100">
             <div class="p-4">
                 <h5 class="fw-bold" style="text-align:center">Income vs Expense</h5>
             </div>
+            <div class="px-4 pb-4 flex-grow-1">
             <ejs-chart id="spline-chart" background="#1a222b" palettes=@(new string[]{"#54ffa9","#ffe91a"})>
                 <e-chart-primaryxaxis valueType="Category">
                     <e-majorgridlines width="0"></e-majorgridlines>
@@ -88,33 +156,129 @@
                 </e-chart-legendsettings>
                 <e-chart-tooltipsettings enable shared></e-chart-tooltipsettings>
             </ejs-chart>
+            </div>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
-        <div class="widget">
+    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex">
+        <div class="widget d-flex flex-column w-100">
             <div class="p-4">
                 <h5 class="fw-bold" style="text-align:center">Recent Transactions</h5>
             </div>
-            <div class="px-4 pb-4">
+            <div class="px-4 pb-4 flex-grow-1">
                 <ejs-grid id="recent-transactions"
                           dataSource="@ViewBag.RecentTransactions" gridLines="None">
                     <e-grid-columns>
                         <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
                         <e-grid-column headerText="Date (BS)" field="NepaliDate" width="130px" textAlign="Left"></e-grid-column>
-                        <e-grid-column headerText="Amount" field="FormattedAccount" width="110px" textAlign="Right"></e-grid-column>
+                        <e-grid-column headerText="Amount" field="FormattedAccount" width="150px" textAlign="Right"></e-grid-column>
                     </e-grid-columns>
                     
                 </ejs-grid>
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-6 mb-3 mb-md-0 hide-mobile">
-        <div class="widget h-100">
-            <div class="d-flex justify-content-center align-items-center h-100">
-                <span><i class="fa-solid fa-plus fa-2xl"></i> Widget</span>
+    <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex">
+        <div class="widget chart d-flex flex-column w-100">
+            <div class="p-4">
+                <h5 class="fw-bold" style="text-align:center">Expense By Category</h5>
+            </div>
+            <div class="px-4 pb-4 flex-grow-1">
+            <ejs-accumulationchart id="doughnutchart" background="#1a222b">
+                <e-accumulation-series-collection>
+                    <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"
+                                           xName="categoryTitleWithIcon" yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new string[]{"#0e8d76","#a4b219","#cb9b00","#8a442c","#0454b5","#7d0a0a","#822690","#4c2090","#313e93","#0096ac"})>
+                        <e-accumulationseries-datalabel name="formattedAmount" visible></e-accumulationseries-datalabel>
+                    </e-accumulation-series>
+                </e-accumulation-series-collection>
+                <e-accumulationchart-legendsettings position="Top" toggleVisibility="false">
+                    <e-legendsettings-textstyle color="#fff" size="1rem"></e-legendsettings-textstyle>
+                </e-accumulationchart-legendsettings>
+                <e-accumulationchart-tooltipsettings enable></e-accumulationchart-tooltipsettings>
+            </ejs-accumulationchart>
             </div>
         </div>
     </div>
 </div>
+
+<script src="~/js/nepali-date.js"></script>
+<script>
+    (function () {
+        var currentBsYear = @bsYear;
+        var currentBsMonth = @bsMonth;
+        var todayBsYear = @bsYear;
+        var todayBsMonth = @bsMonth;
+        var todayBsDay = @bsDay;
+
+        document.getElementById('calPrevMonth').addEventListener('click', function (e) {
+            e.preventDefault();
+            currentBsMonth--;
+            if (currentBsMonth < 1) { currentBsMonth = 12; currentBsYear--; }
+            loadCalendarMonth(currentBsYear, currentBsMonth);
+        });
+
+        document.getElementById('calNextMonth').addEventListener('click', function (e) {
+            e.preventDefault();
+            currentBsMonth++;
+            if (currentBsMonth > 12) { currentBsMonth = 1; currentBsYear++; }
+            loadCalendarMonth(currentBsYear, currentBsMonth);
+        });
+
+        function loadCalendarMonth(bsY, bsM) {
+            fetch('/Dashboard/CalendarData?bsYear=' + bsY + '&bsMonth=' + bsM)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    renderCalendar(bsY, bsM, data);
+                })
+                .catch(function () {
+                    // Fallback: render empty calendar
+                    renderCalendar(bsY, bsM, { daysInMonth: 30, firstDow: 0, transactions: {} });
+                });
+        }
+
+        function renderCalendar(bsY, bsM, data) {
+            // Update title
+            document.getElementById('calMonthTitle').textContent =
+                NepaliDate.monthNames[bsM - 1] + ' ' + bsY;
+
+            var daysInMonth = data.daysInMonth;
+            var firstDow = data.firstDow;
+            var txns = data.transactions || {};
+
+            var html = '';
+            var dayCounter = 1;
+            var started = false;
+            for (var row = 0; row < 6 && dayCounter <= daysInMonth; row++) {
+                html += '<tr>';
+                for (var col = 0; col < 7; col++) {
+                    if (!started && col < firstDow) {
+                        html += '<td></td>';
+                    } else if (dayCounter <= daysInMonth) {
+                        started = true;
+                        var isToday = (bsY === todayBsYear && bsM === todayBsMonth && dayCounter === todayBsDay);
+                        var dayData = txns[dayCounter.toString()];
+                        var cls = 'np-dash-cell';
+                        if (isToday) cls += ' np-dash-today';
+                        if (dayData) cls += ' np-dash-has-data';
+
+                        html += '<td class="' + cls + '">';
+                        html += '<div class="np-dash-day-num">' + dayCounter + '</div>';
+                        if (dayData) {
+                            if (dayData.income > 0)
+                                html += '<div class="np-dash-amount income-amt">+' + dayData.income.toLocaleString() + '</div>';
+                            if (dayData.expense > 0)
+                                html += '<div class="np-dash-amount expense-amt">-' + dayData.expense.toLocaleString() + '</div>';
+                        }
+                        html += '</td>';
+                        dayCounter++;
+                    } else {
+                        html += '<td></td>';
+                    }
+                }
+                html += '</tr>';
+            }
+            document.getElementById('calBody').innerHTML = html;
+        }
+    })();
+</script>
