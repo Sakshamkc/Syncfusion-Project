@@ -2,27 +2,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ExpenseTracker",
+            "name": "ExpenseTracker-WATCH",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ExpenseTracker/bin/Debug/net8.0/ExpenseTracker.dll",
-            "args": [],
+            "program": "dotnet",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/ExpenseTracker/ExpenseTracker.csproj",
+                "--launch-profile",
+                "http"
+            ],
             "cwd": "${workspaceFolder}/ExpenseTracker",
+            "console": "integratedTerminal",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000"
+                "ASPNETCORE_ENVIRONMENT": "Development"
             }
-        },
-        {
-            "name": "ExpenseTracker (Attach)",
-            "type": "coreclr",
-            "request": "attach"
-        }
+        }           
     ]
 }

@@ -241,3 +241,11 @@ D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\obj\Debug\net
 D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\obj\Debug\net8.0\ExpenseTracker.pdb
 D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\obj\Debug\net8.0\ExpenseTracker.genruntimeconfig.cache
 D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\obj\Debug\net8.0\ref\ExpenseTracker.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Users\saksham.kc\source\repos\Syncfusion-Project\ExpenseTracker\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

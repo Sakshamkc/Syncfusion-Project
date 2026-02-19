@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ExpenseTracker
@@ -42,6 +45,37 @@ namespace ExpenseTracker
                 options.LoginPath = "/Account/Login";
                 options.AccessDeniedPath = "/Account/Login";
             });
+
+            // JWT Bearer authentication (for mobile API)
+            var jwtSettings = Configuration.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+            services.AddAuthentication()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
+
+            // Allow CORS for mobile app
+            services.AddCors(options =>
+            {
+                options.AddPolicy("MobileAppPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
                 "Mgo+DSMBMAY9C3t2VVhjQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRd0ViUH5edHVWTmFVWEc=");
         }
@@ -85,6 +119,8 @@ namespace ExpenseTracker
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors("MobileAppPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();

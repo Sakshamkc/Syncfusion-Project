@@ -34,14 +34,14 @@ namespace ExpenseTracker.Controllers
             culture.NumberFormat.CurrencyNegativePattern = 8;
             List<Transaction> SelectedTransactions = await _context.Transactions.Include(x => x.Category).Where(y => y.Date >= StartDate && y.Date <= EndDate).ToListAsync();
             int TotalIncome = SelectedTransactions.Where(i => i.Category.Type == "Income").Sum(j => j.Amount);
-            ViewBag.TotalIncome = TotalIncome.ToString("C0", culture);
+            ViewBag.TotalIncome = TotalIncome.ToString("N0", culture);
 
             int TotalExpense = SelectedTransactions.Where(i => i.Category.Type == "Expense").Sum(j => j.Amount);
-            ViewBag.TotalExpense = TotalExpense.ToString("C0", culture);
+            ViewBag.TotalExpense = TotalExpense.ToString("N0", culture);
 
             int Balance = TotalIncome - TotalExpense;
 
-            ViewBag.Balance = string.Format(culture, "{0:C0}", Balance);
+            ViewBag.Balance = Balance.ToString("N0", culture);
             //Doughnut Chart - Expense By Category
             ViewBag.DoughnutChartData = SelectedTransactions
                 .Where(i => i.Category.Type == "Expense")
