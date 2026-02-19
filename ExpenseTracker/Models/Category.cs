@@ -22,6 +22,12 @@ namespace ExpenseTracker.Models
         [Column(TypeName = "nvarchar(10)")]
         public string Type { get; set; } = "Expense";
 
+        /// <summary>
+        /// If true, transactions under this category auto-copy to the next month
+        /// (e.g. SIP, Salary, Pocket Money, Rent).
+        /// </summary>
+        public bool IsRecurring { get; set; } = false;
+
         [NotMapped]
         public string? TitleWithIcon
         {

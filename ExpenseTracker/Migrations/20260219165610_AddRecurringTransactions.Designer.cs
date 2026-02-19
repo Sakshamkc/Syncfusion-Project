@@ -3,6 +3,7 @@ using System;
 using ExpenseTracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExpenseTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260219165610_AddRecurringTransactions")]
+    partial class AddRecurringTransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,9 +69,6 @@ namespace ExpenseTracker.Migrations
                     b.Property<string>("Icon")
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsRecurring")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -95,6 +95,9 @@ namespace ExpenseTracker.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(75)");

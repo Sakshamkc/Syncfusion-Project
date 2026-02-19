@@ -29,6 +29,9 @@
     ${else}
     <span class="badge bg-danger">${Type}</span>
     ${/if}
+    ${if(IsRecurring)}
+    <span class="badge bg-info ms-2" style="font-size:0.7rem;">Recurring</span>
+    ${/if}
 </script>
 
 <script id="actionColumnTemplate" type="text/x-template">

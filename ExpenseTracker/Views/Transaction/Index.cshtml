@@ -13,7 +13,7 @@
         <ejs-grid id="transactions" dataSource="@Model" gridLines="None" allowSorting="true" allowPaging="true">
             @*<e-grid-pagesettings pageSize="5"></e-grid-pagesettings>*@
             <e-grid-columns>
-                <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
+                <e-grid-column headerText="Category" template="#categoryColumnTemplate"></e-grid-column>
                 <e-grid-column headerText="Date (BS)" field="NepaliDateShort" width="120px" textAlign="Left"></e-grid-column>
                 <e-grid-column headerText="Amount" field="FormattedAccount" width="150px" textAlign="Right"></e-grid-column>
                 <e-grid-column headerText="Actions" template="#actionColumnTemplate" width="100px"></e-grid-column>
@@ -39,4 +39,7 @@
             </button>
         </form>
     </div>
+</script>
+<script id="categoryColumnTemplate" type="text/x-template">
+    ${CategoryTitleWithIcon}${if(Category && Category.IsRecurring)} <span class="badge bg-info" style="font-size:0.65rem;vertical-align:middle;margin-left:4px;">Recurring</span>${/if}
 </script>

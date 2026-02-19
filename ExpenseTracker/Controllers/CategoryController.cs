@@ -42,7 +42,7 @@ namespace ExpenseTracker.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
+        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type,IsRecurring")] Category category)
         {
             if (ModelState.IsValid)
             {

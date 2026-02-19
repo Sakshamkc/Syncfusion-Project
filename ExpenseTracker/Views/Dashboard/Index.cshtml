@@ -352,16 +352,20 @@
                     var html = '';
                     events.forEach(function (ev) {
                         var icon = ev.type === 'Event' ? 'fa-calendar-check' : 'fa-bell';
+                        var badgeClass = ev.type === 'Event' ? 'event' : 'reminder';
                         var timeStr = '';
                         if (ev.startTime) {
-                            timeStr = '<span class="cal-ev-time"><i class="fa-regular fa-clock me-1"></i>' + ev.startTime;
+                            timeStr = '<span class="cal-ev-time"><i class="fa-regular fa-clock"></i>' + ev.startTime;
                             if (ev.endTime) timeStr += ' - ' + ev.endTime;
                             timeStr += '</span>';
                         }
                         html += '<div class="cal-ev-item" data-id="' + ev.eventId + '">' +
                             '<div class="cal-ev-color-bar" style="background:' + getColorHex(ev.color) + '"></div>' +
                             '<div class="cal-ev-content">' +
-                                '<div class="cal-ev-title"><i class="fa-solid ' + icon + ' me-1"></i>' + escapeHtml(ev.title) + '</div>' +
+                                '<div class="cal-ev-title">' +
+                                    '<i class="fa-solid ' + icon + '"></i>' + escapeHtml(ev.title) +
+                                    '<span class="cal-ev-type-badge ' + badgeClass + '">' + ev.type + '</span>' +
+                                '</div>' +
                                 (ev.description ? '<div class="cal-ev-desc">' + escapeHtml(ev.description) + '</div>' : '') +
                                 timeStr +
                             '</div>' +
@@ -461,6 +465,9 @@
 
         // Initial attachment
         attachCalendarClickHandlers(currentBsYear, currentBsMonth);
+
+        // Immediately refresh calendar via AJAX to show event dots on initial load
+        loadCalendarMonth(currentBsYear, currentBsMonth);
 
         document.getElementById('calPrevMonth').addEventListener('click', function (e) {
             e.preventDefault();

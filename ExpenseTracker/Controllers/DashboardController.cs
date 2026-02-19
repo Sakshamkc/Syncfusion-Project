@@ -21,9 +21,6 @@ namespace ExpenseTracker.Controllers
         {
             _context = context;
         }
-        //Last 7 Days
-        DateTime StartDate = DateTime.Today.AddDays(-6);
-        DateTime EndDate = DateTime.Today;
 
 
         public async Task<IActionResult> Index()
@@ -32,7 +29,21 @@ namespace ExpenseTracker.Controllers
             culture.NumberFormat.CurrencySymbol = "Rs";
             culture.NumberFormat.CurrencyPositivePattern = 2;
             culture.NumberFormat.CurrencyNegativePattern = 8;
-            List<Transaction> SelectedTransactions = await _context.Transactions.Include(x => x.Category).Where(y => y.Date >= StartDate && y.Date <= EndDate).ToListAsync();
+
+            // Current BS month date range
+            var todayBs = NepaliDateHelper.AdToBs(DateTime.Today);
+            int bsDaysInMonth = NepaliDateHelper.GetBsMonthDays(todayBs.Year, todayBs.Month);
+            DateTime monthStartAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, 1);
+            DateTime monthEndAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, bsDaysInMonth);
+
+            // Auto-generate recurring transactions for this month if not already present
+            await GenerateRecurringTransactions(todayBs.Year, todayBs.Month, monthStartAd, monthEndAd);
+
+            List<Transaction> SelectedTransactions = await _context.Transactions
+                .Include(x => x.Category)
+                .Where(y => y.Date >= monthStartAd && y.Date <= monthEndAd)
+                .ToListAsync();
+
             int TotalIncome = SelectedTransactions.Where(i => i.Category.Type == "Income").Sum(j => j.Amount);
             ViewBag.TotalIncome = TotalIncome.ToString("N0", culture);
 
@@ -55,7 +66,7 @@ namespace ExpenseTracker.Controllers
                 .OrderByDescending(l => l.amount)
                 .ToList();
 
-
+            // Spline chart: show daily data for the current BS month
             List<SplineChartData> IncomeSummary = SelectedTransactions
                 .Where(i => i.Category.Type == "Income")
                 .GroupBy(j => j.Date)
@@ -76,6 +87,8 @@ namespace ExpenseTracker.Controllers
                })
                .ToList();
 
+            // Use last 7 days for the spline chart x-axis
+            DateTime StartDate = DateTime.Today.AddDays(-6);
             string[] last7Days = Enumerable.Range(0, 7)
                 .Select(i => NepaliDateHelper.FormatBsDateShort(StartDate.AddDays(i))).ToArray();
 
@@ -99,29 +112,16 @@ namespace ExpenseTracker.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            // Nepali Calendar Data — current BS month
-            var todayBs = NepaliDateHelper.AdToBs(DateTime.Today);
+            // Nepali Calendar Data — reuse already-computed BS month info
             ViewBag.BsYear = todayBs.Year;
             ViewBag.BsMonth = todayBs.Month;
             ViewBag.BsDay = todayBs.Day;
             ViewBag.BsMonthName = NepaliDateHelper.GetMonthName(todayBs.Month);
-            ViewBag.BsDaysInMonth = NepaliDateHelper.GetBsMonthDays(todayBs.Year, todayBs.Month);
-
-            // Get AD range for this BS month (1st to last day)
-            int bsDaysInMonth = NepaliDateHelper.GetBsMonthDays(todayBs.Year, todayBs.Month);
             ViewBag.BsDaysInMonth = bsDaysInMonth;
-            var bsMonthStartAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, 1);
-            var bsMonthEndAd = NepaliDateHelper.BsToAd(todayBs.Year, todayBs.Month, bsDaysInMonth);
-
-            // Expense totals per day in this BS month
-            var monthTransactions = await _context.Transactions
-                .Include(t => t.Category)
-                .Where(t => t.Date >= bsMonthStartAd && t.Date <= bsMonthEndAd)
-                .ToListAsync();
 
             // Build a dictionary: BS day number → { income, expense }
             var calendarData = new Dictionary<int, int[]>(); // [income, expense]
-            foreach (var t in monthTransactions)
+            foreach (var t in SelectedTransactions)
             {
                 var bs = NepaliDateHelper.AdToBs(t.Date);
                 if (bs.Year == todayBs.Year && bs.Month == todayBs.Month)
@@ -138,7 +138,7 @@ namespace ExpenseTracker.Controllers
             ViewBag.CalendarData = calendarData;
 
             // Day of week for the 1st of BS month (0=Sun)
-            ViewBag.BsFirstDayOfWeek = (int)bsMonthStartAd.DayOfWeek;
+            ViewBag.BsFirstDayOfWeek = (int)monthStartAd.DayOfWeek;
 
             return View();
         }
@@ -214,6 +214,56 @@ namespace ExpenseTracker.Controllers
             {
                 return Json(new { daysInMonth = 30, firstDow = 0, transactions = new { } });
             }
+        }
+
+        /// <summary>
+        /// Automatically copies transactions from recurring categories  
+        /// from the previous BS month into the current month if not already present.
+        /// </summary>
+        private async Task GenerateRecurringTransactions(int bsYear, int bsMonth, DateTime monthStartAd, DateTime monthEndAd)
+        {
+            // Check if we already have transactions from recurring categories this month
+            bool alreadyGenerated = await _context.Transactions
+                .Include(t => t.Category)
+                .AnyAsync(t => t.Category.IsRecurring && t.Date >= monthStartAd && t.Date <= monthEndAd);
+
+            if (alreadyGenerated) return;
+
+            // Get previous BS month
+            int prevMonth = bsMonth - 1;
+            int prevYear = bsYear;
+            if (prevMonth < 1)
+            {
+                prevMonth = 12;
+                prevYear--;
+            }
+
+            int prevDaysInMonth = NepaliDateHelper.GetBsMonthDays(prevYear, prevMonth);
+            var prevStartAd = NepaliDateHelper.BsToAd(prevYear, prevMonth, 1);
+            var prevEndAd = NepaliDateHelper.BsToAd(prevYear, prevMonth, prevDaysInMonth);
+
+            // Get all transactions from recurring categories in the previous month
+            var recurringTxns = await _context.Transactions
+                .Include(t => t.Category)
+                .Where(t => t.Category.IsRecurring && t.Date >= prevStartAd && t.Date <= prevEndAd)
+                .ToListAsync();
+
+            if (!recurringTxns.Any()) return;
+
+            // Copy each to the 1st of the current BS month
+            foreach (var txn in recurringTxns)
+            {
+                var newTxn = new Transaction
+                {
+                    CategoryId = txn.CategoryId,
+                    Amount = txn.Amount,
+                    Note = txn.Note,
+                    Date = monthStartAd // 1st of the new BS month
+                };
+                _context.Transactions.Add(newTxn);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 

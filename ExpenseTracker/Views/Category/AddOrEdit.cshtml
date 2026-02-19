@@ -37,8 +37,29 @@
                     <span asp-validation-for="Title" class="text-danger fs-6"></span>
                 </div>
                 <div class="mb-3">
-                    <ejs-textbox id="icon" placeholder="Icon" ejs-for="Icon" floatLabelType="Always"></ejs-textbox>
-
+                    <label class="icon-picker-label">Icon</label>
+                    <input type="hidden" id="icon" name="Icon" value="@Model.Icon" />
+                    <div class="icon-picker-field" id="iconPickerField">
+                        <span class="icon-picker-preview" id="iconPreview">@(string.IsNullOrEmpty(Model.Icon) ? "" : Model.Icon)</span>
+                        <span class="icon-picker-placeholder" id="iconPlaceholder" style="@(string.IsNullOrEmpty(Model.Icon) ? "" : "display:none")">Click to pick an icon</span>
+                        <i class="fa-solid fa-chevron-down icon-picker-arrow"></i>
+                    </div>
+                    <div class="icon-picker-dropdown" id="iconPickerDropdown">
+                        <div class="icon-picker-search">
+                            <input type="text" id="iconSearch" placeholder="Search icons..." autocomplete="off" />
+                        </div>
+                        <div class="icon-picker-grid" id="iconPickerGrid"></div>
+                    </div>
+                </div>
+                <div class="mb-3 d-flex align-items-center gap-3">
+                    <label class="recurring-toggle" for="isRecurring">
+                        <input type="checkbox" id="isRecurring" name="IsRecurring" value="true"
+                               @(Model.IsRecurring ? "checked" : "") />
+                        <span class="recurring-slider"></span>
+                    </label>
+                    <label for="isRecurring" class="recurring-label" style="cursor:pointer;">
+                        Recurring monthly
+                    </label>
                 </div>
 
                 <ejs-button id="submit" type="submit" content="Submit" cssClass="e-success"></ejs-button>
@@ -53,7 +74,132 @@
     </div>
 </div>
 
+<script>
+    (function () {
+        var icons = [
+            { emoji: '🛒', name: 'shopping cart groceries' },
+            { emoji: '🍔', name: 'food burger restaurant' },
+            { emoji: '🍕', name: 'pizza food' },
+            { emoji: '☕', name: 'coffee drink cafe' },
+            { emoji: '🍺', name: 'beer drink alcohol' },
+            { emoji: '🏠', name: 'home house rent' },
+            { emoji: '🏢', name: 'office building work' },
+            { emoji: '🚗', name: 'car vehicle transport' },
+            { emoji: '🚕', name: 'taxi cab ride' },
+            { emoji: '🚌', name: 'bus transport public' },
+            { emoji: '✈️', name: 'airplane travel flight' },
+            { emoji: '⛽', name: 'fuel gas petrol' },
+            { emoji: '💰', name: 'money bag salary income' },
+            { emoji: '💵', name: 'cash dollar money' },
+            { emoji: '💳', name: 'credit card payment' },
+            { emoji: '🏦', name: 'bank finance' },
+            { emoji: '📈', name: 'chart stock investment sip' },
+            { emoji: '💼', name: 'briefcase work business' },
+            { emoji: '🎓', name: 'education school college' },
+            { emoji: '📚', name: 'books study education' },
+            { emoji: '💊', name: 'medicine health pill' },
+            { emoji: '🏥', name: 'hospital health medical' },
+            { emoji: '🩺', name: 'doctor health checkup' },
+            { emoji: '👕', name: 'clothing shirt fashion' },
+            { emoji: '👟', name: 'shoes sneakers' },
+            { emoji: '💡', name: 'electricity light bill utility' },
+            { emoji: '📱', name: 'phone mobile recharge' },
+            { emoji: '💻', name: 'computer laptop tech' },
+            { emoji: '🎮', name: 'gaming entertainment' },
+            { emoji: '🎬', name: 'movies entertainment cinema' },
+            { emoji: '🎵', name: 'music subscription' },
+            { emoji: '📺', name: 'tv television streaming' },
+            { emoji: '🏋️', name: 'gym fitness exercise' },
+            { emoji: '⚽', name: 'sports football' },
+            { emoji: '🎁', name: 'gift present' },
+            { emoji: '💐', name: 'flowers gift bouquet' },
+            { emoji: '🐶', name: 'pet dog animal' },
+            { emoji: '🐱', name: 'pet cat animal' },
+            { emoji: '👶', name: 'baby child kids' },
+            { emoji: '🧒', name: 'pocket money allowance kids' },
+            { emoji: '💇', name: 'haircut salon grooming' },
+            { emoji: '🧴', name: 'skincare beauty' },
+            { emoji: '🍳', name: 'cooking kitchen' },
+            { emoji: '🧹', name: 'cleaning household' },
+            { emoji: '🔧', name: 'repair maintenance tools' },
+            { emoji: '🛠️', name: 'tools hardware' },
+            { emoji: '🏗️', name: 'construction building' },
+            { emoji: '📦', name: 'package delivery shopping' },
+            { emoji: '🧾', name: 'receipt bill invoice' },
+            { emoji: '📝', name: 'note memo' },
+            { emoji: '🎂', name: 'birthday celebration cake' },
+            { emoji: '🎉', name: 'party celebration' },
+            { emoji: '💒', name: 'wedding marriage' },
+            { emoji: '🕌', name: 'temple donation religious' },
+            { emoji: '❤️', name: 'donation charity heart' },
+            { emoji: '🏖️', name: 'vacation holiday beach' },
+            { emoji: '🏔️', name: 'mountain travel trek' },
+            { emoji: '🚿', name: 'water bill utility' },
+            { emoji: '🔥', name: 'gas cooking utility' },
+            { emoji: '📡', name: 'internet wifi subscription' },
+            { emoji: '🗑️', name: 'waste garbage' },
+            { emoji: '💸', name: 'expense money flying transfer' },
+            { emoji: '🤑', name: 'income profit bonus' },
+            { emoji: '🏧', name: 'atm withdrawal' },
+            { emoji: '💎', name: 'jewelry luxury' },
+            { emoji: '🎗️', name: 'insurance protection' },
+            { emoji: '📊', name: 'analytics report budget' },
+            { emoji: '🏘️', name: 'rent housing property' },
+        ];
 
+        var grid = document.getElementById('iconPickerGrid');
+        var dropdown = document.getElementById('iconPickerDropdown');
+        var field = document.getElementById('iconPickerField');
+        var hiddenInput = document.getElementById('icon');
+        var preview = document.getElementById('iconPreview');
+        var placeholder = document.getElementById('iconPlaceholder');
+        var searchInput = document.getElementById('iconSearch');
+
+        function renderIcons(filter) {
+            grid.innerHTML = '';
+            var filtered = filter
+                ? icons.filter(function (ic) { return ic.name.indexOf(filter.toLowerCase()) !== -1; })
+                : icons;
+            filtered.forEach(function (ic) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'icon-picker-item';
+                btn.textContent = ic.emoji;
+                btn.title = ic.name;
+                btn.addEventListener('click', function () {
+                    hiddenInput.value = ic.emoji;
+                    preview.textContent = ic.emoji;
+                    preview.style.display = '';
+                    placeholder.style.display = 'none';
+                    dropdown.classList.remove('open');
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        renderIcons('');
+
+        field.addEventListener('click', function (e) {
+            dropdown.classList.toggle('open');
+            if (dropdown.classList.contains('open')) {
+                searchInput.value = '';
+                renderIcons('');
+                setTimeout(function () { searchInput.focus(); }, 50);
+            }
+        });
+
+        searchInput.addEventListener('input', function () {
+            renderIcons(this.value);
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', function (e) {
+            if (!field.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+    })();
+</script>
 
 @*@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
