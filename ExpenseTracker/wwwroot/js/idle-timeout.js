@@ -16,10 +16,13 @@
     var idleTimer    = null;
     var warnTimer    = null;
     var countdownId  = null;
+    var navbarTickId = null;
+    var lastActivity = Date.now();
     var overlay, modal, countdownEl, stayBtn, logoutBtn;
+    var navBadge, navText;
 
-    // Activity events to track
-    var EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
+    // Activity events to track (only deliberate interactions reset timer)
+    var EVENTS = ['mousedown', 'keydown', 'touchstart', 'click'];
 
     function init() {
         // Build popup DOM
@@ -31,6 +34,8 @@
         countdownEl = document.getElementById('idleCountdown');
         stayBtn     = document.getElementById('idleStayBtn');
         logoutBtn   = document.getElementById('idleLogoutBtn');
+        navBadge    = document.getElementById('sessionTimerBadge');
+        navText     = document.getElementById('sessionTimerText');
 
         // Button handlers
         stayBtn.addEventListener('click', function () {
@@ -62,6 +67,7 @@
     function onActivity() {
         // Only reset if the warning isn't showing
         if (!overlay || overlay.style.display !== 'flex') {
+            lastActivity = Date.now();
             resetTimers();
         }
     }
@@ -70,6 +76,13 @@
         clearTimeout(idleTimer);
         clearTimeout(warnTimer);
         clearInterval(countdownId);
+        clearInterval(navbarTickId);
+
+        lastActivity = Date.now();
+
+        // Update navbar timer every second
+        updateNavbarTimer();
+        navbarTickId = setInterval(updateNavbarTimer, 1000);
 
         // After 13 min of idle → show warning
         warnTimer = setTimeout(function () {
@@ -80,6 +93,21 @@
         idleTimer = setTimeout(function () {
             doLogout();
         }, IDLE_LIMIT_MS);
+    }
+
+    function updateNavbarTimer() {
+        if (!navText || !navBadge) return;
+        var elapsed = Date.now() - lastActivity;
+        var remaining = Math.max(0, Math.floor((IDLE_LIMIT_MS - elapsed) / 1000));
+        navText.textContent = formatTime(remaining);
+
+        // Change badge color based on remaining time
+        navBadge.classList.remove('timer-warning', 'timer-danger');
+        if (remaining <= 120) {
+            navBadge.classList.add('timer-danger');
+        } else if (remaining <= 300) {
+            navBadge.classList.add('timer-warning');
+        }
     }
 
     function showWarning() {

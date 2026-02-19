@@ -31,12 +31,17 @@ namespace ExpenseTracker.Controllers
 
 
         // GET: Transaction/AddOrEdit
-        public IActionResult AddOrEdit(int id=0)
+        public IActionResult AddOrEdit(int id=0, string? date = null)
         {
             PopulateCategories();
             if (id==0)
             {
-                return View(new Transaction());
+                var transaction = new Transaction();
+                if (!string.IsNullOrEmpty(date) && DateTime.TryParse(date, out var parsedDate))
+                {
+                    transaction.Date = parsedDate;
+                }
+                return View(transaction);
             }
            else
             {

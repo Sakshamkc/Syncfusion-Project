@@ -15,34 +15,34 @@
 <div class="row mb-4">
     <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary income">
-            <div class="d-flex flex-column justify-content-center p-5">
-                <span class="fw-bold" style="font-size:1.75rem">Rs</span>
+            <div class="d-flex flex-column justify-content-center px-3 py-2">
+                <span class="fw-bold" style="font-size:1.25rem">Rs</span>
             </div>
-            <div class="d-flex flex-column m-auto py-3">
-                <span class="lead" style="text-align:center">Total Income</span>
-                <h1 class="display-6 fw-bold">@ViewBag.TotalIncome</h1>
+            <div class="d-flex flex-column m-auto py-1">
+                <span style="text-align:center;font-size:0.8rem;opacity:0.85">Total Income</span>
+                <h1 class="fs-5 fw-bold mb-0">@ViewBag.TotalIncome</h1>
             </div>
         </div>
     </div>
     <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary expense">
-            <div class="d-flex flex-column justify-content-center p-5">
-                <span class="fw-bold" style="font-size:1.75rem">Rs</span>
+            <div class="d-flex flex-column justify-content-center px-3 py-2">
+                <span class="fw-bold" style="font-size:1.25rem">Rs</span>
             </div>
-            <div class="d-flex flex-column m-auto py-3">
-                <span class="lead" style="text-align:center">Total Expense</span>
-                <h1 class="display-6 fw-bold">@ViewBag.TotalExpense</h1>
+            <div class="d-flex flex-column m-auto py-1">
+                <span style="text-align:center;font-size:0.8rem;opacity:0.85">Total Expense</span>
+                <h1 class="fs-5 fw-bold mb-0">@ViewBag.TotalExpense</h1>
             </div>
         </div>
     </div>
     <div class="col-12 col-md-4 mb-3 mb-md-0">
         <div class="d-flex flex-row widget summary balance">
-            <div class="d-flex flex-column justify-content-center p-5">
-                <span class="fw-bold" style="font-size:1.75rem">Rs</span>
+            <div class="d-flex flex-column justify-content-center px-3 py-2">
+                <span class="fw-bold" style="font-size:1.25rem">Rs</span>
             </div>
-            <div class="d-flex flex-column m-auto py-3">
-                <span class="lead" style="text-align:center">Total Balance</span>
-                <h1 class="display-6 fw-bold">@ViewBag.Balance</h1>
+            <div class="d-flex flex-column m-auto py-1">
+                <span style="text-align:center;font-size:0.8rem;opacity:0.85">Total Balance</span>
+                <h1 class="fs-5 fw-bold mb-0">@ViewBag.Balance</h1>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
                                             if (isToday) cellClass += " np-dash-today";
                                             if (hasData) cellClass += " np-dash-has-data";
 
-                                            <td class="@cellClass">
+                                            <td class="@cellClass" data-bsday="@dayCounter" style="cursor:pointer" title="Add transaction for @dayCounter @bsMonthName @bsYear">
                                                 <div class="np-dash-day-num">@dayCounter</div>
                                                 @if (hasData)
                                                 {
@@ -203,6 +203,64 @@
 </div>
 
 <script src="~/js/nepali-date.js"></script>
+
+<!-- Calendar Event Modal -->
+<div id="calEventOverlay" class="cal-event-overlay" style="display:none;">
+    <div class="cal-event-modal">
+        <div class="cal-event-header">
+            <h5 class="mb-0 fw-bold" id="calEventModalTitle">
+                <i class="fa-solid fa-calendar-plus me-2"></i><span id="calEventDateLabel"></span>
+            </h5>
+            <button type="button" class="cal-event-close" id="calEventCloseBtn">&times;</button>
+        </div>
+
+        <!-- Existing events for this day -->
+        <div id="calEventList" class="cal-event-list"></div>
+
+        <!-- Add new event form -->
+        <div class="cal-event-form">
+            <div class="cal-event-type-toggle">
+                <button type="button" class="cal-type-btn active" data-type="Reminder">
+                    <i class="fa-solid fa-bell"></i> Reminder
+                </button>
+                <button type="button" class="cal-type-btn" data-type="Event">
+                    <i class="fa-solid fa-calendar-check"></i> Event
+                </button>
+            </div>
+
+            <input type="hidden" id="calEventDate" />
+            <input type="hidden" id="calEventType" value="Reminder" />
+
+            <div class="mb-2">
+                <input type="text" id="calEventTitle" class="cal-event-input" placeholder="Title *" maxlength="100" />
+            </div>
+            <div class="mb-2">
+                <textarea id="calEventDesc" class="cal-event-input" placeholder="Description (optional)" rows="2" maxlength="500"></textarea>
+            </div>
+            <div id="calEventTimeRow" class="cal-event-time-row" style="display:none;">
+                <div>
+                    <label class="cal-event-time-label">Start</label>
+                    <input type="time" id="calEventStart" class="cal-event-input cal-event-time" />
+                </div>
+                <div>
+                    <label class="cal-event-time-label">End</label>
+                    <input type="time" id="calEventEnd" class="cal-event-input cal-event-time" />
+                </div>
+            </div>
+            <div class="cal-event-colors mb-3">
+                <button type="button" class="cal-color-btn active" data-color="blue" style="background:#2196f3"></button>
+                <button type="button" class="cal-color-btn" data-color="green" style="background:#28a745"></button>
+                <button type="button" class="cal-color-btn" data-color="red" style="background:#dc3545"></button>
+                <button type="button" class="cal-color-btn" data-color="orange" style="background:#fd7e14"></button>
+                <button type="button" class="cal-color-btn" data-color="purple" style="background:#6f42c1"></button>
+            </div>
+            <button type="button" id="calEventSaveBtn" class="cal-event-save-btn">
+                <i class="fa-solid fa-plus me-1"></i> Add
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     (function () {
         var currentBsYear = @bsYear;
@@ -210,6 +268,199 @@
         var todayBsYear = @bsYear;
         var todayBsMonth = @bsMonth;
         var todayBsDay = @bsDay;
+
+        // Event modal elements
+        var overlay = document.getElementById('calEventOverlay');
+        var closeBtn = document.getElementById('calEventCloseBtn');
+        var dateLabel = document.getElementById('calEventDateLabel');
+        var eventList = document.getElementById('calEventList');
+        var eventDateInput = document.getElementById('calEventDate');
+        var eventTypeInput = document.getElementById('calEventType');
+        var eventTitle = document.getElementById('calEventTitle');
+        var eventDesc = document.getElementById('calEventDesc');
+        var eventStart = document.getElementById('calEventStart');
+        var eventEnd = document.getElementById('calEventEnd');
+        var timeRow = document.getElementById('calEventTimeRow');
+        var saveBtn = document.getElementById('calEventSaveBtn');
+        var typeBtns = document.querySelectorAll('.cal-type-btn');
+        var colorBtns = document.querySelectorAll('.cal-color-btn');
+        var selectedColor = 'blue';
+
+        // Type toggle
+        typeBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                typeBtns.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                eventTypeInput.value = btn.getAttribute('data-type');
+                timeRow.style.display = btn.getAttribute('data-type') === 'Event' ? 'flex' : 'none';
+            });
+        });
+
+        // Color picker
+        colorBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                colorBtns.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                selectedColor = btn.getAttribute('data-color');
+            });
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', function () { overlay.style.display = 'none'; });
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) overlay.style.display = 'none';
+        });
+
+        // Open modal for a specific BS day
+        function openEventModal(bsY, bsM, bsDay) {
+            var adDate = NepaliDate.bsToAd(bsY, bsM, bsDay);
+            var adStr = NepaliDate.formatAd(adDate);
+            var bsStr = bsDay + ' ' + NepaliDate.monthNames[bsM - 1] + ' ' + bsY;
+
+            dateLabel.textContent = bsStr;
+            eventDateInput.value = adStr;
+
+            // Reset form
+            eventTitle.value = '';
+            eventDesc.value = '';
+            eventStart.value = '';
+            eventEnd.value = '';
+            eventTypeInput.value = 'Reminder';
+            typeBtns.forEach(function (b) { b.classList.remove('active'); });
+            typeBtns[0].classList.add('active');
+            timeRow.style.display = 'none';
+            colorBtns.forEach(function (b) { b.classList.remove('active'); });
+            colorBtns[0].classList.add('active');
+            selectedColor = 'blue';
+
+            // Load existing events for this day
+            loadDayEvents(adStr);
+
+            overlay.style.display = 'flex';
+            setTimeout(function () { eventTitle.focus(); }, 200);
+        }
+
+        function loadDayEvents(adStr) {
+            eventList.innerHTML = '<div style="text-align:center;padding:8px;opacity:0.5;"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+            fetch('/CalendarEvent/GetDayEvents?date=' + adStr)
+                .then(function (r) { return r.json(); })
+                .then(function (events) {
+                    if (!events.length) {
+                        eventList.innerHTML = '<div class="cal-event-empty"><i class="fa-regular fa-calendar-xmark me-1"></i> No events for this day</div>';
+                        return;
+                    }
+                    var html = '';
+                    events.forEach(function (ev) {
+                        var icon = ev.type === 'Event' ? 'fa-calendar-check' : 'fa-bell';
+                        var timeStr = '';
+                        if (ev.startTime) {
+                            timeStr = '<span class="cal-ev-time"><i class="fa-regular fa-clock me-1"></i>' + ev.startTime;
+                            if (ev.endTime) timeStr += ' - ' + ev.endTime;
+                            timeStr += '</span>';
+                        }
+                        html += '<div class="cal-ev-item" data-id="' + ev.eventId + '">' +
+                            '<div class="cal-ev-color-bar" style="background:' + getColorHex(ev.color) + '"></div>' +
+                            '<div class="cal-ev-content">' +
+                                '<div class="cal-ev-title"><i class="fa-solid ' + icon + ' me-1"></i>' + escapeHtml(ev.title) + '</div>' +
+                                (ev.description ? '<div class="cal-ev-desc">' + escapeHtml(ev.description) + '</div>' : '') +
+                                timeStr +
+                            '</div>' +
+                            '<button class="cal-ev-delete" title="Delete" data-id="' + ev.eventId + '"><i class="fa-solid fa-trash-can"></i></button>' +
+                        '</div>';
+                    });
+                    eventList.innerHTML = html;
+
+                    // Delete buttons
+                    eventList.querySelectorAll('.cal-ev-delete').forEach(function (btn) {
+                        btn.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            var id = btn.getAttribute('data-id');
+                            deleteEvent(id, adStr);
+                        });
+                    });
+                })
+                .catch(function () {
+                    eventList.innerHTML = '<div class="cal-event-empty">Failed to load events</div>';
+                });
+        }
+
+        function deleteEvent(id, adStr) {
+            fetch('/CalendarEvent/Delete?id=' + id, { method: 'POST', credentials: 'same-origin' })
+                .then(function () {
+                    loadDayEvents(adStr);
+                    // Refresh calendar to update dots
+                    loadCalendarMonth(currentBsYear, currentBsMonth);
+                });
+        }
+
+        // Save event
+        saveBtn.addEventListener('click', function () {
+            var title = eventTitle.value.trim();
+            if (!title) { eventTitle.focus(); eventTitle.style.borderColor = '#dc3545'; return; }
+            eventTitle.style.borderColor = '';
+
+            var body = {
+                title: title,
+                description: eventDesc.value.trim() || null,
+                type: eventTypeInput.value,
+                date: eventDateInput.value,
+                startTime: eventStart.value || null,
+                endTime: eventEnd.value || null,
+                color: selectedColor
+            };
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Saving...';
+
+            fetch('/CalendarEvent/Create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(body)
+            })
+            .then(function (r) { return r.json(); })
+            .then(function () {
+                // Reset form
+                eventTitle.value = '';
+                eventDesc.value = '';
+                eventStart.value = '';
+                eventEnd.value = '';
+                // Reload day events
+                loadDayEvents(eventDateInput.value);
+                // Refresh calendar dots
+                loadCalendarMonth(currentBsYear, currentBsMonth);
+            })
+            .catch(function () { alert('Failed to save'); })
+            .finally(function () {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Add';
+            });
+        });
+
+        function getColorHex(c) {
+            var map = { blue: '#2196f3', green: '#28a745', red: '#dc3545', orange: '#fd7e14', purple: '#6f42c1' };
+            return map[c] || map.blue;
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Calendar click handlers — open event modal
+        function attachCalendarClickHandlers(bsY, bsM) {
+            var cells = document.querySelectorAll('#calBody td[data-bsday]');
+            cells.forEach(function (cell) {
+                cell.addEventListener('click', function () {
+                    var day = parseInt(this.getAttribute('data-bsday'));
+                    openEventModal(bsY, bsM, day);
+                });
+            });
+        }
+
+        // Initial attachment
+        attachCalendarClickHandlers(currentBsYear, currentBsMonth);
 
         document.getElementById('calPrevMonth').addEventListener('click', function (e) {
             e.preventDefault();
@@ -232,19 +483,18 @@
                     renderCalendar(bsY, bsM, data);
                 })
                 .catch(function () {
-                    // Fallback: render empty calendar
                     renderCalendar(bsY, bsM, { daysInMonth: 30, firstDow: 0, transactions: {} });
                 });
         }
 
         function renderCalendar(bsY, bsM, data) {
-            // Update title
             document.getElementById('calMonthTitle').textContent =
                 NepaliDate.monthNames[bsM - 1] + ' ' + bsY;
 
             var daysInMonth = data.daysInMonth;
             var firstDow = data.firstDow;
             var txns = data.transactions || {};
+            var evts = data.events || {};
 
             var html = '';
             var dayCounter = 1;
@@ -258,17 +508,26 @@
                         started = true;
                         var isToday = (bsY === todayBsYear && bsM === todayBsMonth && dayCounter === todayBsDay);
                         var dayData = txns[dayCounter.toString()];
+                        var dayEvents = evts[dayCounter.toString()];
                         var cls = 'np-dash-cell';
                         if (isToday) cls += ' np-dash-today';
                         if (dayData) cls += ' np-dash-has-data';
 
-                        html += '<td class="' + cls + '">';
+                        html += '<td class="' + cls + '" data-bsday="' + dayCounter + '" style="cursor:pointer" title="Click to add event/reminder">';
                         html += '<div class="np-dash-day-num">' + dayCounter + '</div>';
                         if (dayData) {
                             if (dayData.income > 0)
                                 html += '<div class="np-dash-amount income-amt">+' + dayData.income.toLocaleString() + '</div>';
                             if (dayData.expense > 0)
                                 html += '<div class="np-dash-amount expense-amt">-' + dayData.expense.toLocaleString() + '</div>';
+                        }
+                        // Event dots
+                        if (dayEvents && dayEvents.length) {
+                            html += '<div class="np-event-dots">';
+                            dayEvents.forEach(function (ev) {
+                                html += '<span class="np-event-dot" style="background:' + getColorHex(ev.color) + '" title="' + escapeHtml(ev.title) + '"></span>';
+                            });
+                            html += '</div>';
                         }
                         html += '</td>';
                         dayCounter++;
@@ -279,6 +538,7 @@
                 html += '</tr>';
             }
             document.getElementById('calBody').innerHTML = html;
+            attachCalendarClickHandlers(bsY, bsM);
         }
     })();
 </script>

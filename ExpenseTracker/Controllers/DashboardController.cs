@@ -161,6 +161,12 @@ namespace ExpenseTracker.Controllers
                     .Where(t => t.Date >= monthStartAd && t.Date <= monthEndAd)
                     .ToListAsync();
 
+                // Also fetch calendar events for this month
+                var calEvents = await _context.CalendarEvents
+                    .Where(e => e.Date >= monthStartAd && e.Date <= monthEndAd)
+                    .OrderBy(e => e.StartTime)
+                    .ToListAsync();
+
                 var result = new Dictionary<string, int[]>();
                 foreach (var t in txns)
                 {
@@ -183,7 +189,26 @@ namespace ExpenseTracker.Controllers
                 foreach (var kv in result)
                     txnJson[kv.Key] = new { income = kv.Value[0], expense = kv.Value[1] };
 
-                return Json(new { daysInMonth, firstDow, transactions = txnJson });
+                // Group events by BS day
+                var evtJson = new Dictionary<string, object>();
+                foreach (var ev in calEvents)
+                {
+                    var bs = NepaliDateHelper.AdToBs(ev.Date);
+                    if (bs.Year == bsYear && bs.Month == bsMonth)
+                    {
+                        var key = bs.Day.ToString();
+                        if (!evtJson.ContainsKey(key))
+                            evtJson[key] = new List<object>();
+                        ((List<object>)evtJson[key]).Add(new
+                        {
+                            ev.Title,
+                            ev.Color,
+                            ev.Type
+                        });
+                    }
+                }
+
+                return Json(new { daysInMonth, firstDow, transactions = txnJson, events = evtJson });
             }
             catch
             {

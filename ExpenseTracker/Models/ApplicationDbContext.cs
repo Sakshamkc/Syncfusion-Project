@@ -12,5 +12,6 @@ namespace ExpenseTracker.Models
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<CalendarEvent> CalendarEvents { get; set; }
     }
 }
