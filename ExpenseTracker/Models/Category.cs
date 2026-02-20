@@ -28,6 +28,12 @@ namespace ExpenseTracker.Models
         /// </summary>
         public bool IsRecurring { get; set; } = false;
 
+        /// <summary>
+        /// Fixed monthly amount for recurring categories (e.g. 5000 for SIP).
+        /// </summary>
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? RecurringAmount { get; set; }
+
         [NotMapped]
         public string? TitleWithIcon
         {

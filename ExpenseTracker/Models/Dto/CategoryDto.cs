@@ -16,5 +16,9 @@ namespace ExpenseTracker.Models.Dto
         [Required]
         [RegularExpression("^(Income|Expense)$", ErrorMessage = "Type must be 'Income' or 'Expense'.")]
         public string Type { get; set; } = "Expense";
+
+        public bool IsRecurring { get; set; } = false;
+
+        public decimal? RecurringAmount { get; set; }
     }
 }

@@ -35,7 +35,9 @@ namespace ExpenseTracker.Controllers.Api
                     CategoryId = c.CategoryId,
                     Title = c.Title,
                     Icon = c.Icon,
-                    Type = c.Type
+                    Type = c.Type,
+                    IsRecurring = c.IsRecurring,
+                    RecurringAmount = c.RecurringAmount
                 })
                 .ToListAsync();
 
@@ -58,7 +60,9 @@ namespace ExpenseTracker.Controllers.Api
                 CategoryId = category.CategoryId,
                 Title = category.Title,
                 Icon = category.Icon,
-                Type = category.Type
+                Type = category.Type,
+                IsRecurring = category.IsRecurring,
+                RecurringAmount = category.RecurringAmount
             });
         }
 
@@ -76,7 +80,9 @@ namespace ExpenseTracker.Controllers.Api
             {
                 Title = dto.Title,
                 Icon = dto.Icon,
-                Type = dto.Type
+                Type = dto.Type,
+                IsRecurring = dto.IsRecurring,
+                RecurringAmount = dto.RecurringAmount
             };
 
             _context.Categories.Add(category);
@@ -103,6 +109,8 @@ namespace ExpenseTracker.Controllers.Api
             category.Title = dto.Title;
             category.Icon = dto.Icon;
             category.Type = dto.Type;
+            category.IsRecurring = dto.IsRecurring;
+            category.RecurringAmount = dto.RecurringAmount;
 
             _context.Update(category);
             await _context.SaveChangesAsync();
@@ -112,7 +120,9 @@ namespace ExpenseTracker.Controllers.Api
                 CategoryId = category.CategoryId,
                 Title = category.Title,
                 Icon = category.Icon,
-                Type = category.Type
+                Type = category.Type,
+                IsRecurring = category.IsRecurring,
+                RecurringAmount = category.RecurringAmount
             });
         }
 
