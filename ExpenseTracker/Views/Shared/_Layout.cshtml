@@ -210,22 +210,26 @@
                     var isOpen = sidebar.classList.contains('mobile-open');
                     if (isOpen) {
                         sidebar.classList.remove('mobile-open');
+                        sidebar.style.transform = '';
                         overlay.classList.remove('active');
                     } else {
                         // Ensure sidebar is visible before opening
                         sidebar.style.visibility = 'visible';
                         sidebar.style.display = 'block';
+                        sidebar.style.transform = 'translateX(0%)';
                         sidebar.classList.add('mobile-open');
                         overlay.classList.add('active');
                     }
                     // Keep dock target margin at 0
                     if (dockTarget) {
                         dockTarget.style.marginLeft = '0px';
+                        dockTarget.style.width = '100%';
                     }
                 });
 
                 overlay.addEventListener('click', function () {
                     sidebar.classList.remove('mobile-open');
+                    sidebar.style.transform = '';
                     overlay.classList.remove('active');
                 });
             }

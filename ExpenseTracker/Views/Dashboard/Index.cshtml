@@ -177,7 +177,7 @@
                 <h5 class="fw-bold" style="text-align:center">Recent Transactions</h5>
             </div>
             <div class="px-4 pb-4 flex-grow-1">
-                <ejs-grid id="recent-transactions"                       dataSource="@ViewBag.RecentTransactions" gridLines="None">
+                <ejs-grid id="recent-transactions" dataSource="@ViewBag.RecentTransactions" gridLines="None">
                     <e-grid-columns>
                         <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
                         <e-grid-column headerText="Date (BS)" field="NepaliDate" width="130px"
@@ -198,9 +198,10 @@
             <div class="px-4 pb-4 flex-grow-1">
                 <ejs-accumulationchart id="doughnutchart" background="transparent">
                     <e-accumulation-series-collection>
-                        <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"                    xName="categoryTitleWithIcon"
-                                               yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new
-                                                                                                                                          string[] { "#0e8d76", "#a4b219", "#cb9b00", "#8a442c", "#0454b5", "#7d0a0a", "#822690", "#4c2090", "#313e93", "#0096ac" })>
+                        <e-accumulation-series dataSource="@ViewBag.DoughnutChartData" xName="categoryTitleWithIcon"
+                                               yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new string[] { "#0e8d76",
+                                                                                                              "#a4b219", "#cb9b00", "#8a442c", "#0454b5", "#7d0a0a", "#822690", "#4c2090", "#313e93",
+                                                                                                              "#0096ac" })>
                             <e-accumulationseries-datalabel name="formattedAmount"
                                                             visible></e-accumulationseries-datalabel>
                         </e-accumulation-series>
@@ -218,15 +219,15 @@
 <!-- Events & Reminders Widget -->
 @{
     var todayEvents = ViewBag.TodayEvents as List<ExpenseTracker.Models.CalendarEvent> ?? new
-List<ExpenseTracker.Models.CalendarEvent>();
+    List<ExpenseTracker.Models.CalendarEvent>();
     var reminders = todayEvents.Where(e => e.Type == "Reminder").ToList();
     var events = todayEvents.Where(e => e.Type == "Event").ToList();
 }
 <div class="row mb-4">
     <div class="col-12 d-flex">
-        <div class="widget d-flex flex-column w-100">
+        <div class="widget d-flex flex-column w-100" style="overflow:visible;">
             <div class="p-4 pb-2 d-flex align-items-center justify-content-between">
-                <h5 class="fw-bold mb-0" style="text-align:center; width:100%;">
+                <h5 class="fw-bold mb-0" style="text-align:center; width:100%; font-size:1.1rem;">
                     <i class="fa-solid fa-calendar-day me-2" style="color: #0e8d76;"></i>Today's Events &amp; Reminders
                     <span class="ms-2"
                           style="background: rgba(14,141,118,0.15); color: #54ffa9; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; vertical-align: middle;">

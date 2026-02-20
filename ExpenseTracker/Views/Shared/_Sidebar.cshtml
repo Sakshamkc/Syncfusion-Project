@@ -63,6 +63,9 @@
                 <img src="~/logo.png" />
             </a>
             <div class="w-100"></div>
+            <button id="mobileSidebarClose" class="mobile-sidebar-close" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
             <i id="sidebar-toggler" class="fa-solid"></i>
         </div>
         <div class="profile-wrapper">
@@ -84,6 +87,20 @@
             dockBar.toggle();
         };
 
+        // Mobile close button
+        var mobileCloseBtn = document.getElementById('mobileSidebarClose');
+        if (mobileCloseBtn) {
+            mobileCloseBtn.addEventListener('click', function () {
+                var sidebar = document.getElementById('sidebar');
+                var overlay = document.getElementById('sidebarOverlay');
+                if (sidebar) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.transform = '';
+                }
+                if (overlay) overlay.classList.remove('active');
+            });
+        }
+
         // Close sidebar on mobile when a menu link is clicked
         document.getElementById('sidebar').addEventListener('click', function (e) {
             var anchor = e.target.closest('a, .e-anchor-wrap');
@@ -91,7 +108,10 @@
                 var sidebar = document.getElementById('sidebar');
                 var overlay = document.getElementById('sidebarOverlay');
                 var dockTarget = document.querySelector('.dock-target');
-                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (sidebar) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.transform = '';
+                }
                 if (overlay) overlay.classList.remove('active');
                 if (dockTarget) dockTarget.style.marginLeft = '0px';
             }

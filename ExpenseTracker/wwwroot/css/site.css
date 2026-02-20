@@ -331,6 +331,16 @@ body {
     border-radius: 5px;
 }
 
+    .e-grid .e-rowcell {
+        white-space: normal !important;
+        text-overflow: clip !important;
+        overflow: visible !important;
+    }
+
+    .e-grid .e-headercelldiv {
+        white-space: normal !important;
+    }
+
     .e-grid .e-gridcontent, .e-grid .e-table {
         background-color: var(--bg-surface);
     }
@@ -691,6 +701,11 @@ img.profile-pic {
 
 /* ===== RESPONSIVE / MOBILE ===== */
 
+/* Mobile sidebar close button – hidden on desktop */
+.mobile-sidebar-close {
+    display: none;
+}
+
 /* Mobile hamburger toggle button */
 .mobile-menu-toggle {
     display: none;
@@ -751,10 +766,52 @@ img.profile-pic {
         visibility: visible !important;
     }
 
-    #sidebar.mobile-open {
+    #sidebar.mobile-open,
+    #sidebar.e-sidebar.mobile-open,
+    #sidebar.e-sidebar.e-left.mobile-open,
+    #sidebar.e-sidebar.e-close.mobile-open,
+    #sidebar.e-sidebar.e-left.e-close.mobile-open,
+    #sidebar.e-sidebar.e-left.e-open.mobile-open {
         transform: translateX(0%) !important;
         visibility: visible !important;
         display: block !important;
+        width: 280px !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    /* Mobile sidebar close button */
+    .mobile-sidebar-close {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255,255,255,0.08);
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .mobile-sidebar-close:hover {
+        background: rgba(255,255,255,0.15);
+    }
+
+    /* When mobile-open, undo the e-close text-hiding so labels are visible */
+    #sidebar.e-close.mobile-open .e-anchor-wrap,
+    #sidebar.e-close.mobile-open .e-menu-item.e-menu-caret-icon {
+        font-size: 14px !important;
+    }
+
+    #sidebar.e-close.mobile-open .profile-wrapper .titles {
+        display: flex !important;
+    }
+
+    #sidebar.e-close.mobile-open .app-logo {
+        display: flex !important;
     }
 
     /* Override Syncfusion's inline margin-left on the dock target */
@@ -779,6 +836,16 @@ img.profile-pic {
     body {
         overflow: auto !important;
         overflow-x: hidden !important;
+    }
+
+    /* Grid: reduce font-size on mobile so columns fit */
+    .e-grid .e-rowcell,
+    .e-grid .e-headercelldiv {
+        font-size: 0.85rem !important;
+    }
+
+    .e-grid .e-rowcell .badge {
+        font-size: 0.65rem !important;
     }
 
     /* Dashboard summary widgets: 1-column on small screens */
@@ -1860,7 +1927,10 @@ textarea.cal-event-input {
 /* ===== Dashboard Events & Reminders Widget ===== */
 .dash-events-empty {
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .dash-events-empty-icon {
@@ -1871,7 +1941,7 @@ textarea.cal-event-input {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
+    margin-bottom: 1rem;
 }
 
 .dash-events-empty-icon i {
@@ -1880,15 +1950,17 @@ textarea.cal-event-input {
 }
 
 .dash-events-empty-text {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
-    opacity: 0.7;
-    margin-bottom: 4px;
+    color: var(--text-primary, #fff);
+    opacity: 0.85;
+    margin-bottom: 6px;
 }
 
 .dash-events-empty-hint {
-    font-size: 0.8rem;
-    opacity: 0.4;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #adb5bd);
+    opacity: 0.65;
 }
 
 .dash-event-section-header {
