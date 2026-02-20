@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 <div class="row mb-4">
     <div class="col-12 col-md-6 mb-3 mb-md-0 d-flex">
@@ -59,14 +59,21 @@
             <div class="px-4 pb-4 flex-grow-1" id="nepaliCalendarContainer">
                 <div class="np-dashboard-cal">
                     <div class="np-dash-header">
-                        <button type="button" class="np-cal-nav" id="calPrevMonth" title="Previous month">&laquo;</button>
+                        <button type="button" class="np-cal-nav" id="calPrevMonth"
+                                title="Previous month">&laquo;</button>
                         <span class="np-dash-title" id="calMonthTitle">@bsMonthName @bsYear</span>
                         <button type="button" class="np-cal-nav" id="calNextMonth" title="Next month">&raquo;</button>
                     </div>
                     <table class="np-dash-table">
                         <thead>
                             <tr>
-                                <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
                             </tr>
                         </thead>
                         <tbody id="calBody">
@@ -76,44 +83,45 @@
                                 for (int row = 0; row < 6 && dayCounter <= daysInMonth; row++)
                                 {
                                     <tr>
-                                    @for (int col = 0; col < 7; col++)
-                                    {
-                                        if (!started && col < firstDow)
+                                        @for (int col = 0; col < 7; col++)
                                         {
-                                            <td></td>
-                                        }
-                                        else if (dayCounter <= daysInMonth)
-                                        {
-                                            started = true;
-                                            var isToday = (dayCounter == bsDay);
-                                            var hasData = calendarData.ContainsKey(dayCounter);
-                                            var cellClass = "np-dash-cell";
-                                            if (isToday) cellClass += " np-dash-today";
-                                            if (hasData) cellClass += " np-dash-has-data";
+                                            if (!started && col < firstDow)
+                                            {
+                                                <td></td>
+                                            }
+                                            else if (dayCounter <= daysInMonth)
+                                            {
+                                                started = true;
+                                                var isToday = (dayCounter == bsDay);
+                                                var hasData = calendarData.ContainsKey(dayCounter);
+                                                var cellClass = "np-dash-cell";
+                                                if (isToday) cellClass += " np-dash-today";
+                                                if (hasData) cellClass += " np-dash-has-data";
 
-                                            <td class="@cellClass" data-bsday="@dayCounter" style="cursor:pointer" title="Add transaction for @dayCounter @bsMonthName @bsYear">
-                                                <div class="np-dash-day-num">@dayCounter</div>
-                                                @if (hasData)
-                                                {
-                                                    var inc = calendarData[dayCounter][0];
-                                                    var exp = calendarData[dayCounter][1];
-                                                    if (inc > 0)
+                                                <td class="@cellClass" data-bsday="@dayCounter" style="cursor:pointer"
+                                                    title="Add transaction for @dayCounter @bsMonthName @bsYear">
+                                                    <div class="np-dash-day-num">@dayCounter</div>
+                                                    @if (hasData)
                                                     {
-                                                        <div class="np-dash-amount income-amt">+@inc.ToString("N0")</div>
+                                                        var inc = calendarData[dayCounter][0];
+                                                        var exp = calendarData[dayCounter][1];
+                                                        if (inc > 0)
+                                                        {
+                                                            <div class="np-dash-amount income-amt">+@inc.ToString("N0")</div>
+                                                        }
+                                                        if (exp > 0)
+                                                        {
+                                                            <div class="np-dash-amount expense-amt">-@exp.ToString("N0")</div>
+                                                        }
                                                     }
-                                                    if (exp > 0)
-                                                    {
-                                                        <div class="np-dash-amount expense-amt">-@exp.ToString("N0")</div>
-                                                    }
-                                                }
-                                            </td>
-                                            dayCounter++;
+                                                </td>
+                                                dayCounter++;
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
                                         }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
-                                    }
                                     </tr>
                                 }
                             }
@@ -134,28 +142,30 @@
                 <h5 class="fw-bold" style="text-align:center">Income vs Expense</h5>
             </div>
             <div class="px-4 pb-4 flex-grow-1">
-            <ejs-chart id="spline-chart" background="transparent" palettes=@(new string[]{"#54ffa9","#ffe91a"})>
-                <e-chart-primaryxaxis valueType="Category">
-                    <e-majorgridlines width="0"></e-majorgridlines>
-                    <e-majorticklines width="0"></e-majorticklines>
-                </e-chart-primaryxaxis>
-                <e-chart-primaryyaxis>
-                    <e-majorgridlines width="1" color="" dashArray="3,5"></e-majorgridlines>
-                    <e-majorticklines width="0"></e-majorticklines>
-                    <e-linestyle width="0"></e-linestyle>
-                </e-chart-primaryyaxis>
-                <e-chart-chartarea>
-                    <e-chartarea-border width="0"></e-chartarea-border>
-                </e-chart-chartarea>
-                <e-series-collection>
-                    <e-series dataSource="@ViewBag.SplineChartData" xName="day" yName="income" name="Income" width="3" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
-                    <e-series dataSource="@ViewBag.SplineChartData" xName="day" yName="expense" name="Expense" width="3" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
-                </e-series-collection>
-                <e-chart-legendsettings position="Top" alignment="Far" toggleVisibility="false">
-                    <e-legendsettings-textstyle color="" size="1rem"></e-legendsettings-textstyle>
-                </e-chart-legendsettings>
-                <e-chart-tooltipsettings enable shared></e-chart-tooltipsettings>
-            </ejs-chart>
+                <ejs-chart id="spline-chart" background="transparent" palettes=@(new string[]{"#54ffa9","#ffe91a"})>
+                    <e-chart-primaryxaxis valueType="Category">
+                        <e-majorgridlines width="0"></e-majorgridlines>
+                        <e-majorticklines width="0"></e-majorticklines>
+                    </e-chart-primaryxaxis>
+                    <e-chart-primaryyaxis>
+                        <e-majorgridlines width="1" color="" dashArray="3,5"></e-majorgridlines>
+                        <e-majorticklines width="0"></e-majorticklines>
+                        <e-linestyle width="0"></e-linestyle>
+                    </e-chart-primaryyaxis>
+                    <e-chart-chartarea>
+                        <e-chartarea-border width="0"></e-chartarea-border>
+                    </e-chart-chartarea>
+                    <e-series-collection>
+                        <e-series dataSource="@ViewBag.SplineChartData" xName="day" yName="income" name="Income"
+                                  width="3" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
+                        <e-series dataSource="@ViewBag.SplineChartData" xName="day" yName="expense" name="Expense"
+                                  width="3" type="@Syncfusion.EJ2.Charts.ChartSeriesType.Spline"></e-series>
+                    </e-series-collection>
+                    <e-chart-legendsettings position="Top" alignment="Far" toggleVisibility="false">
+                        <e-legendsettings-textstyle color="" size="1rem"></e-legendsettings-textstyle>
+                    </e-chart-legendsettings>
+                    <e-chart-tooltipsettings enable shared></e-chart-tooltipsettings>
+                </ejs-chart>
             </div>
         </div>
     </div>
@@ -167,14 +177,15 @@
                 <h5 class="fw-bold" style="text-align:center">Recent Transactions</h5>
             </div>
             <div class="px-4 pb-4 flex-grow-1">
-                <ejs-grid id="recent-transactions"
-                          dataSource="@ViewBag.RecentTransactions" gridLines="None">
+                <ejs-grid id="recent-transactions"                       dataSource="@ViewBag.RecentTransactions" gridLines="None">
                     <e-grid-columns>
                         <e-grid-column headerText="Category" field="CategoryTitleWithIcon"></e-grid-column>
-                        <e-grid-column headerText="Date (BS)" field="NepaliDate" width="130px" textAlign="Left"></e-grid-column>
-                        <e-grid-column headerText="Amount" field="FormattedAccount" width="150px" textAlign="Right"></e-grid-column>
+                        <e-grid-column headerText="Date (BS)" field="NepaliDate" width="130px"
+                                       textAlign="Left"></e-grid-column>
+                        <e-grid-column headerText="Amount" field="FormattedAccount" width="150px"
+                                       textAlign="Right"></e-grid-column>
                     </e-grid-columns>
-                    
+
                 </ejs-grid>
             </div>
         </div>
@@ -185,22 +196,151 @@
                 <h5 class="fw-bold" style="text-align:center">Expense By Category</h5>
             </div>
             <div class="px-4 pb-4 flex-grow-1">
-            <ejs-accumulationchart id="doughnutchart" background="transparent">
-                <e-accumulation-series-collection>
-                    <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"
-                                           xName="categoryTitleWithIcon" yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new string[]{"#0e8d76","#a4b219","#cb9b00","#8a442c","#0454b5","#7d0a0a","#822690","#4c2090","#313e93","#0096ac"})>
-                        <e-accumulationseries-datalabel name="formattedAmount" visible></e-accumulationseries-datalabel>
-                    </e-accumulation-series>
-                </e-accumulation-series-collection>
-                <e-accumulationchart-legendsettings position="Top" toggleVisibility="false">
-                    <e-legendsettings-textstyle color="" size="1rem"></e-legendsettings-textstyle>
-                </e-accumulationchart-legendsettings>
-                <e-accumulationchart-tooltipsettings enable></e-accumulationchart-tooltipsettings>
-            </ejs-accumulationchart>
+                <ejs-accumulationchart id="doughnutchart" background="transparent">
+                    <e-accumulation-series-collection>
+                        <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"                    xName="categoryTitleWithIcon"
+                                               yName="amount" innerRadius="60%" legendShape="Circle" palettes=@(new
+                                                                                                                                          string[] { "#0e8d76", "#a4b219", "#cb9b00", "#8a442c", "#0454b5", "#7d0a0a", "#822690", "#4c2090", "#313e93", "#0096ac" })>
+                            <e-accumulationseries-datalabel name="formattedAmount"
+                                                            visible></e-accumulationseries-datalabel>
+                        </e-accumulation-series>
+                    </e-accumulation-series-collection>
+                    <e-accumulationchart-legendsettings position="Top" toggleVisibility="false">
+                        <e-legendsettings-textstyle color="" size="1rem"></e-legendsettings-textstyle>
+                    </e-accumulationchart-legendsettings>
+                    <e-accumulationchart-tooltipsettings enable></e-accumulationchart-tooltipsettings>
+                </ejs-accumulationchart>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Events & Reminders Widget -->
+@{
+    var todayEvents = ViewBag.TodayEvents as List<ExpenseTracker.Models.CalendarEvent> ?? new
+List<ExpenseTracker.Models.CalendarEvent>();
+    var reminders = todayEvents.Where(e => e.Type == "Reminder").ToList();
+    var events = todayEvents.Where(e => e.Type == "Event").ToList();
+}
+<div class="row mb-4">
+    <div class="col-12 d-flex">
+        <div class="widget d-flex flex-column w-100">
+            <div class="p-4 pb-2 d-flex align-items-center justify-content-between">
+                <h5 class="fw-bold mb-0" style="text-align:center; width:100%;">
+                    <i class="fa-solid fa-calendar-day me-2" style="color: #0e8d76;"></i>Today's Events &amp; Reminders
+                    <span class="ms-2"
+                          style="background: rgba(14,141,118,0.15); color: #54ffa9; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; vertical-align: middle;">
+                        @todayEvents.Count
+                    </span>
+                </h5>
+            </div>
+            <div class="px-4 pb-4 flex-grow-1">
+                @if (!todayEvents.Any())
+                {
+                    <div class="dash-events-empty">
+                        <div class="dash-events-empty-icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <div class="dash-events-empty-text">No events or reminders for today</div>
+                        <div class="dash-events-empty-hint">Click any date on the calendar to add one</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <!-- Reminders Column -->
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <div class="dash-event-section-header">
+                                <div class="dash-event-section-icon"
+                                     style="background: rgba(255,171,0,0.12); color: #ffab00;">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <span class="fw-bold">Reminders</span>
+                                <span class="dash-event-count">@reminders.Count</span>
+                            </div>
+                            @if (!reminders.Any())
+                            {
+                                <div class="dash-event-none">No reminders today</div>
+                            }
+                            else
+                            {
+                                @foreach (var r in reminders)
+                                {
+                                    <div class="dash-event-item" style="border-left-color: @GetColorHex(r.Color);">
+                                        <div class="dash-event-title">
+                                            <i class="fa-solid fa-bell" style="color: @GetColorHex(r.Color);"></i>
+                                            @r.Title
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(r.Description))
+                                        {
+                                            <div class="dash-event-desc">@r.Description</div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <!-- Events Column -->
+                        <div class="col-12 col-md-6">
+                            <div class="dash-event-section-header">
+                                <div class="dash-event-section-icon"
+                                     style="background: rgba(33,150,243,0.12); color: #2196f3;">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                </div>
+                                <span class="fw-bold">Events</span>
+                                <span class="dash-event-count">@events.Count</span>
+                            </div>
+                            @if (!events.Any())
+                            {
+                                <div class="dash-event-none">No events today</div>
+                            }
+                            else
+                            {
+                                @foreach (var ev in events)
+                                {
+                                    <div class="dash-event-item" style="border-left-color: @GetColorHex(ev.Color);">
+                                        <div class="dash-event-title">
+                                            <i class="fa-solid fa-calendar-check" style="color: @GetColorHex(ev.Color);"></i>
+                                            @ev.Title
+                                        </div>
+                                        @if (ev.StartTime.HasValue)
+                                        {
+                                            <div class="dash-event-time">
+                                                <i class="fa-solid fa-clock"></i>
+                                                @ev.StartTime.Value.ToString(@"hh\:mm")
+                                                @if (ev.EndTime.HasValue)
+                                                {
+                                                    <span> - @ev.EndTime.Value.ToString(@"hh\:mm")</span>
+                                                }
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(ev.Description))
+                                        {
+                                            <div class="dash-event-desc">@ev.Description</div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetColorHex(string color)
+    {
+        return color switch
+        {
+            "green" => "#28a745",
+            "red" => "#dc3545",
+            "orange" => "#fd7e14",
+            "purple" => "#6f42c1",
+            _ => "#2196f3"
+        };
+    }
+}
 
 <script src="~/js/nepali-date.js"></script>
 
@@ -235,7 +375,8 @@
                 <input type="text" id="calEventTitle" class="cal-event-input" placeholder="Title *" maxlength="100" />
             </div>
             <div class="mb-2">
-                <textarea id="calEventDesc" class="cal-event-input" placeholder="Description (optional)" rows="2" maxlength="500"></textarea>
+                <textarea id="calEventDesc" class="cal-event-input" placeholder="Description (optional)" rows="2"
+                          maxlength="500"></textarea>
             </div>
             <div id="calEventTimeRow" class="cal-event-time-row" style="display:none;">
                 <div>
@@ -248,7 +389,8 @@
                 </div>
             </div>
             <div class="cal-event-colors mb-3">
-                <button type="button" class="cal-color-btn active" data-color="blue" style="background:#2196f3"></button>
+                <button type="button" class="cal-color-btn active" data-color="blue"
+                        style="background:#2196f3"></button>
                 <button type="button" class="cal-color-btn" data-color="green" style="background:#28a745"></button>
                 <button type="button" class="cal-color-btn" data-color="red" style="background:#dc3545"></button>
                 <button type="button" class="cal-color-btn" data-color="orange" style="background:#fd7e14"></button>
@@ -362,15 +504,15 @@
                         html += '<div class="cal-ev-item" data-id="' + ev.eventId + '">' +
                             '<div class="cal-ev-color-bar" style="background:' + getColorHex(ev.color) + '"></div>' +
                             '<div class="cal-ev-content">' +
-                                '<div class="cal-ev-title">' +
-                                    '<i class="fa-solid ' + icon + '"></i>' + escapeHtml(ev.title) +
-                                    '<span class="cal-ev-type-badge ' + badgeClass + '">' + ev.type + '</span>' +
-                                '</div>' +
-                                (ev.description ? '<div class="cal-ev-desc">' + escapeHtml(ev.description) + '</div>' : '') +
-                                timeStr +
+                            '<div class="cal-ev-title">' +
+                            '<i class="fa-solid ' + icon + '"></i>' + escapeHtml(ev.title) +
+                            '<span class="cal-ev-type-badge ' + badgeClass + '">' + ev.type + '</span>' +
+                            '</div>' +
+                            (ev.description ? '<div class="cal-ev-desc">' + escapeHtml(ev.description) + '</div>' : '') +
+                            timeStr +
                             '</div>' +
                             '<button class="cal-ev-delete" title="Delete" data-id="' + ev.eventId + '"><i class="fa-solid fa-trash-can"></i></button>' +
-                        '</div>';
+                            '</div>';
                     });
                     eventList.innerHTML = html;
 
@@ -422,23 +564,23 @@
                 credentials: 'same-origin',
                 body: JSON.stringify(body)
             })
-            .then(function (r) { return r.json(); })
-            .then(function () {
-                // Reset form
-                eventTitle.value = '';
-                eventDesc.value = '';
-                eventStart.value = '';
-                eventEnd.value = '';
-                // Reload day events
-                loadDayEvents(eventDateInput.value);
-                // Refresh calendar dots
-                loadCalendarMonth(currentBsYear, currentBsMonth);
-            })
-            .catch(function () { alert('Failed to save'); })
-            .finally(function () {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Add';
-            });
+                .then(function (r) { return r.json(); })
+                .then(function () {
+                    // Reset form
+                    eventTitle.value = '';
+                    eventDesc.value = '';
+                    eventStart.value = '';
+                    eventEnd.value = '';
+                    // Reload day events
+                    loadDayEvents(eventDateInput.value);
+                    // Refresh calendar dots
+                    loadCalendarMonth(currentBsYear, currentBsMonth);
+                })
+                .catch(function () { alert('Failed to save'); })
+                .finally(function () {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Add';
+                });
         });
 
         function getColorHex(c) {

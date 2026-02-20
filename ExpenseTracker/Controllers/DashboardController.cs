@@ -140,6 +140,13 @@ namespace ExpenseTracker.Controllers
             // Day of week for the 1st of BS month (0=Sun)
             ViewBag.BsFirstDayOfWeek = (int)monthStartAd.DayOfWeek;
 
+            // Today's Events & Reminders
+            var todayEvents = await _context.CalendarEvents
+                .Where(e => e.Date == DateTime.Today)
+                .OrderBy(e => e.StartTime)
+                .ToListAsync();
+            ViewBag.TodayEvents = todayEvents;
+
             return View();
         }
 

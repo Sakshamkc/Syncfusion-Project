@@ -1,12 +1,12 @@
-﻿@{
+@model ExpenseTracker.Controllers.RegisterViewModel
+@{
     Layout = null;
-    var sessionExpired = ViewBag.SessionExpired as string;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Expense Tracker — Login</title>
+    <title>Expense Tracker — Register</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -92,7 +92,7 @@
             filter: blur(80px);
         }
 
-        /* ===== Login card ===== */
+        /* ===== Register card ===== */
         .login-card {
             position: relative;
             z-index: 1;
@@ -113,12 +113,6 @@
         }
 
         /* Logo / header */
-        .login-logo {
-            width: 56px;
-            height: 56px;
-            object-fit: contain;
-            margin-bottom: 0.75rem;
-        }
         .login-header {
             text-align: center;
             margin-bottom: 1.75rem;
@@ -254,16 +248,18 @@
             margin-bottom: 1.25rem;
             animation: shake 0.35s ease;
         }
-        .login-alert.info-alert {
-            background: rgba(255,171,0,0.12);
-            color: #ffab00;
-            border-color: rgba(255,171,0,0.2);
-            animation: none;
-        }
         @@keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-6px); }
             40%, 80% { transform: translateX(6px); }
+        }
+
+        /* Validation errors */
+        .validation-error {
+            color: #ff5630;
+            font-size: 0.78rem;
+            margin-top: 4px;
+            display: block;
         }
 
         /* Theme toggle */
@@ -294,8 +290,16 @@
         .login-footer {
             text-align: center;
             margin-top: 1.5rem;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             color: var(--login-text-muted);
+        }
+        .login-footer a {
+            color: var(--login-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-footer a:hover {
+            text-decoration: underline;
         }
 
         /* Responsive */
@@ -322,18 +326,11 @@
     <div class="login-card">
         <div class="login-header">
             <div class="login-icon-circle">
-                <i class="fa-solid fa-wallet"></i>
+                <i class="fa-solid fa-user-plus"></i>
             </div>
-            <h2>Welcome Back</h2>
-            <p>Sign in to your Expense Tracker</p>
+            <h2>Create Account</h2>
+            <p>Sign up for Expense Tracker</p>
         </div>
-
-        @if (sessionExpired == "true")
-        {
-            <div class="login-alert info-alert">
-                <i class="fa-solid fa-clock me-1"></i> Your session has expired. Please log in again.
-            </div>
-        }
 
         @if (ViewBag.Error != null)
         {
@@ -342,37 +339,58 @@
             </div>
         }
 
+        @if (!ViewData.ModelState.IsValid)
+        {
+            var errors = ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).Where(m => !string.IsNullOrEmpty(m));
+            if (errors.Any())
+            {
+                <div class="login-alert">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                    @string.Join(" ", errors)
+                </div>
+            }
+        }
+
         <form method="post" autocomplete="off">
             <div class="login-group">
-                <label for="username">Email</label>
+                <label for="Email">Email</label>
                 <div class="input-wrap">
-                    <input type="email" id="username" name="username"
-                           placeholder="admin@expense.com" required autofocus />
+                    <input type="email" id="Email" name="Email"
+                           value="@Model?.Email"
+                           placeholder="you@example.com" required autofocus />
                     <i class="fa-solid fa-envelope"></i>
                 </div>
             </div>
             <div class="login-group">
-                <label for="password">Password</label>
+                <label for="Password">Password</label>
                 <div class="input-wrap">
-                    <input type="password" id="password" name="password"
-                           placeholder="Enter your password" required />
+                    <input type="password" id="Password" name="Password"
+                           placeholder="At least 6 characters" required />
                     <i class="fa-solid fa-lock"></i>
-                    <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1" aria-label="Show password">
-                        <i class="fa-solid fa-eye" id="pwToggleIcon"></i>
+                    <button type="button" class="pw-toggle" data-target="Password" tabindex="-1" aria-label="Show password">
+                        <i class="fa-solid fa-eye pw-icon"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="login-group">
+                <label for="ConfirmPassword">Confirm Password</label>
+                <div class="input-wrap">
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword"
+                           placeholder="Re-enter your password" required />
+                    <i class="fa-solid fa-lock"></i>
+                    <button type="button" class="pw-toggle" data-target="ConfirmPassword" tabindex="-1" aria-label="Show password">
+                        <i class="fa-solid fa-eye pw-icon"></i>
                     </button>
                 </div>
             </div>
             <button type="submit" class="login-btn">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                Sign In
+                <i class="fa-solid fa-user-plus"></i>
+                Create Account
             </button>
         </form>
 
         <div class="login-footer">
-            <i class="fa-solid fa-shield-halved me-1"></i> Secured with encrypted authentication
-            <div style="margin-top: 0.75rem;">
-                Don't have an account? <a href="@Url.Action("Register", "Account")" style="color: var(--login-accent); text-decoration: none; font-weight: 600;">Create one</a>
-            </div>
+            Already have an account? <a href="@Url.Action("Login", "Account")">Sign In</a>
         </div>
     </div>
 
@@ -397,14 +415,17 @@
                 applyTheme(next);
             });
 
-            // Password visibility toggle
-            var pwInput = document.getElementById('password');
-            var pwIcon = document.getElementById('pwToggleIcon');
-            document.getElementById('pwToggle').addEventListener('click', function() {
-                var show = pwInput.type === 'password';
-                pwInput.type = show ? 'text' : 'password';
-                pwIcon.classList.remove('fa-eye', 'fa-eye-slash');
-                pwIcon.classList.add(show ? 'fa-eye-slash' : 'fa-eye');
+            // Password visibility toggles
+            document.querySelectorAll('.pw-toggle').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var targetId = btn.getAttribute('data-target');
+                    var input = document.getElementById(targetId);
+                    var ico = btn.querySelector('.pw-icon');
+                    var show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    ico.classList.remove('fa-eye', 'fa-eye-slash');
+                    ico.classList.add(show ? 'fa-eye-slash' : 'fa-eye');
+                });
             });
         })();
     </script>
